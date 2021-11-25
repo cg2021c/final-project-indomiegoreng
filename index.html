@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Seas</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/main.js"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
+  <title>Seas</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <div class="timer-score">
+    <div id="timer">TIME: 0s</div>
+    <div> &emsp; &emsp; </div>
+    <div id="score">SCORE: 0</div>
+  </div>
+  <script type="module" src="./js/timer.js"></script>
+  <script type="module" src="/main.js"></script>
+</body>
+
 </html>
