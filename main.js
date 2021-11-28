@@ -29,7 +29,16 @@ class Boat {
         vel: 0,
         rot: 0
       }
+      this.score = 0
     })
+  }
+
+  getScore(){
+    return this.score
+  }
+
+  setScore(score){
+    this.score = score
   }
 
   stop(){
@@ -59,6 +68,7 @@ class Trash{
     }
 
     this.trash = _scene
+    this.taken = false
   }
 }
 
@@ -215,10 +225,14 @@ function isColliding(obj1, obj2){
 function checkCollisions(){
   if(boat.boat){
     trashes.forEach(trash => {
-      console.log("hello")
       if(trash.trash){
         if(isColliding(boat.boat, trash.trash)){
           scene.remove(trash.trash)
+          if(trash.taken == false){
+            trash.taken = true
+            boat.setScore(boat.getScore() + 1)
+            console.log(boat.score);
+          }
         }
       }
     })
