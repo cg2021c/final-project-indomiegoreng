@@ -21,8 +21,9 @@ class Boat {
     loader.load("assets/boat/scene.gltf", (gltf) => {
       scene.add( gltf.scene )
       gltf.scene.scale.set(3, 3, 3)
-      gltf.scene.position.set(5,13,50)
-      gltf.scene.rotation.y = 1.5
+      // gltf.scene.position.set(5,13,50)
+      // gltf.scene.rotation.y = 1.5
+      gltf.scene.rotation.y = 3*Math.PI/2
 
       this.boat = gltf.scene
       this.speed = {
@@ -30,6 +31,20 @@ class Boat {
         rot: 0
       }
       this.score = 0
+
+      // Bounding box
+      var box = new THREE.Box3().setFromObject(gltf.scene)
+      box.getCenter(gltf.scene.position)
+      gltf.scene.position.multiplyScalar(-1)
+
+      var pivot = new THREE.Group()
+      scene.add(pivot)
+      pivot.add(gltf.scene)
+      pivot.position.set(5, 2, 50)
+      this.pivot = pivot
+
+      var axesHelper = new THREE.AxesHelper(100);
+      pivot.add( axesHelper );
     })
   }
 
@@ -48,8 +63,10 @@ class Boat {
 
   update(){
     if(this.boat){
-      this.boat.rotation.y += this.speed.rot
-      this.boat.translateX(this.speed.vel)
+      this.pivot.rotation.y += this.speed.rot
+      if (this.pivot.rotation.y < 2*Math.PI) this.pivot.rotation.y += 2*Math.PI
+      else if (this.pivot.rotation.y > 2*Math.PI) this.pivot.rotation.y -= 2*Math.PI
+      this.pivot.translateZ(this.speed.vel)
     }
   }
 }
@@ -223,10 +240,10 @@ function isColliding(obj1, obj2){
 }
 
 function checkCollisions(){
-  if(boat.boat){
+  if(boat.pivot){
     trashes.forEach(trash => {
       if(trash.trash){
-        if(isColliding(boat.boat, trash.trash)){
+        if(isColliding(boat.pivot, trash.trash)){
           scene.remove(trash.trash)
           if(trash.taken == false){
             trash.taken = true
