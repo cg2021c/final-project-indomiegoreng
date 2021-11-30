@@ -17,6 +17,29 @@ function random(min, max) {
 }
 
 class Boat {
+  static BOAT_ACCEL = 1
+  static BOAT_DECEL = 2
+  static BOAT_IDLE = 3
+
+  static BOAT_BLADE_LEFT = 1
+  static BOAT_BLADE_MIDDLE = 2
+  static 
+
+  currentState = Boat.BOAT_IDLE
+
+  maxSpeedAccel = 2.0
+  maxSpeedDecel = 0.5
+
+  acceleration = 0.05
+  deceleration = -0.05
+
+  rotAcceleration = 0.01
+  rotDeceleration = -0.1
+
+  currentBladeState = Boat.BOAT_BLADE_MIDDLE
+
+  lastClock = 0
+  lastClock2 = 0
   constructor(){
     loader.load("assets/boat/scene.gltf", (gltf) => {
       scene.add( gltf.scene )
@@ -45,6 +68,10 @@ class Boat {
 
       var axesHelper = new THREE.AxesHelper(100);
       pivot.add( axesHelper );
+
+      // Clock
+      this.clock = new THREE.Clock()
+      this.clock.start()
     })
   }
 
@@ -60,12 +87,69 @@ class Boat {
     this.speed.vel = 0
     this.speed.rot = 0
   }
+  
+  startAccelerating() {
+    this.currentState = Boat.BOAT_ACCEL
+    if (this.speed.vel < 0.5) this.speed.vel = 0.5
+  }
+
+  startAcceleratingBack() {
+    this.currentState = Boat.BOAT_DECEL
+  }
+
+  stopAccelerating() {
+    this.currentState = Boat.BOAT_IDLE
+  }
 
   update(){
     if(this.boat){
-      this.pivot.rotation.y += this.speed.rot
-      if (this.pivot.rotation.y < 2*Math.PI) this.pivot.rotation.y += 2*Math.PI
-      else if (this.pivot.rotation.y > 2*Math.PI) this.pivot.rotation.y -= 2*Math.PI
+      if (this.clock.getElapsedTime()-this.lastClock > 0.2) {
+        this.lastClock = this.clock.getElapsedTime()
+        if (this.currentState == Boat.BOAT_IDLE) {
+          if (this.speed.vel > 0) {
+            this.speed.vel += this.deceleration
+            if (this.speed.vel < 0) {
+              this.speed.vel = 0
+              this.currentState = Boat.BOAT_IDLE
+            }
+          }
+          else if (this.speed.vel < 0) {
+            this.speed.vel -= this.deceleration
+            if (this.speed.vel > 0) {
+              this.speed.vel = 0
+              this.currentState = Boat.BOAT_IDLE
+            }
+          }
+        }
+        else if (this.currentState == Boat.BOAT_ACCEL) {
+          this.speed.vel += this.acceleration
+          if (this.speed.vel > this.maxSpeedAccel) {
+            this.speed.vel = this.maxSpeedAccel
+          }
+        }
+        else if (this.currentState == Boat.BOAT_DECEL) {
+          this.speed.vel -= this.acceleration
+          if (this.speed.vel < -this.maxSpeedDecel) {
+            this.speed.vel = -this.maxSpeedDecel
+          }
+        }
+        // console.log("Boat state is " + this.currentState)
+        // console.log("Boat Blade state is " + this.currentBladeState)
+        // console.log("Boat speed is" + this.speed.vel)
+      }
+      
+      if (this.currentBladeState == Boat.BOAT_BLADE_RIGHT) {
+        this.pivot.rotation.y -= this.rotAcceleration
+        if (this.pivot.rotation.y < 2*Math.PI) this.pivot.rotation.y += 2*Math.PI
+      }
+      else if (this.currentBladeState == Boat.BOAT_BLADE_LEFT) {
+        this.pivot.rotation.y += this.rotAcceleration
+        if (this.pivot.rotation.y > 2*Math.PI) this.pivot.rotation.y -= 2*Math.PI
+      }
+      else if (this.currentBladeState == Boat.BOAT_BLADE_MIDDLE) {
+        // Do nothing
+      }
+
       this.pivot.translateZ(this.speed.vel)
       
       controls.target.set(this.pivot.position.x, this.pivot.position.y, this.pivot.position.z)
@@ -207,23 +291,27 @@ async function init() {
   window.addEventListener( 'resize', onWindowResize );
 
   window.addEventListener( 'keydown', function(e){
-    if(e.key == "ArrowUp"){
-      boat.speed.vel = 1
+    if(e.key == "ArrowUp") {
+      boat.startAccelerating()
     }
-    if(e.key == "ArrowDown"){
-      boat.speed.vel = -1
+    else if(e.key == "ArrowDown") {
+      boat.startAcceleratingBack()
     }
-    if(e.key == "ArrowRight"){
-      boat.speed.rot = -0.1
+    else if(e.key == "ArrowRight") {
+      boat.currentBladeState = Boat.BOAT_BLADE_RIGHT
     }
-    if(e.key == "ArrowLeft"){
-      boat.speed.rot = 0.1
+    else if(e.key == "ArrowLeft") {
+      boat.currentBladeState = Boat.BOAT_BLADE_LEFT
     }
   })
   window.addEventListener( 'keyup', function(e){
-    boat.stop()
+    if(e.key == "ArrowUp" || e.key == "ArrowDown") {
+      boat.stopAccelerating()
+    }
+    else if(e.key == "ArrowRight" || e.key == "ArrowLeft") {
+      boat.currentBladeState = Boat.BOAT_BLADE_MIDDLE
+    }
   })
-
 }
 
 function onWindowResize() {
