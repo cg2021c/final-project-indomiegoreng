@@ -39,6 +39,11 @@ class Boat {
 
   lastClock = 0
   lastClock2 = 0
+
+  dfux_x = 0.0005
+  dfux_y = 0.002
+  dfux_z = -0.0012
+
   constructor(){
     loader.load("assets/boat/scene.gltf", (gltf) => {
       scene.add( gltf.scene )
@@ -148,6 +153,35 @@ class Boat {
       else if (this.currentBladeState == Boat.BOAT_BLADE_MIDDLE) {
         // Do nothing
       }
+
+      if (this.currentState == Boat.BOAT_ACCEL) {
+        this.boat.rotation.z += 0.001
+        if (this.boat.rotation.z > Math.PI/20) {
+          this.boat.rotation.z = Math.PI/20
+        }
+      }
+      else {
+        this.boat.rotation.z -= 0.001
+        if (this.boat.rotation.z < 0) {
+          this.boat.rotation.z = 0
+        }
+      }
+      // dfux
+      this.boat.rotation.x += this.dfux_x
+      if (this.boat.rotation.x < -Math.PI/40 || this.boat.rotation.x > Math.PI/40) {
+        this.dfux_x *= -1
+      }
+      if (boat.curentState == Boat.BOAT_IDLE) {
+        this.boat.rotation.y += this.dfux_y
+        if (this.boat.rotation.y < -Math.PI/40 || this.boat.rotation.y > Math.PI/40) {
+          this.dfux_y *= -1
+        }
+        this.boat.rotation.z += this.dfux_z
+        if (this.boat.rotation.z < -Math.PI/40 || this.boat.rotation.z > Math.PI/40) {
+          this.dfux_z *= -1
+        }
+      }
+
 
       this.pivot.translateZ(this.speed.vel)
       
