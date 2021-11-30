@@ -67,6 +67,9 @@ class Boat {
       if (this.pivot.rotation.y < 2*Math.PI) this.pivot.rotation.y += 2*Math.PI
       else if (this.pivot.rotation.y > 2*Math.PI) this.pivot.rotation.y -= 2*Math.PI
       this.pivot.translateZ(this.speed.vel)
+      
+      controls.target.set(this.pivot.position.x, this.pivot.position.y, this.pivot.position.z)
+      controls.update()
     }
   }
 }
@@ -188,10 +191,10 @@ async function init() {
   updateSun();
 
   controls = new OrbitControls( camera, renderer.domElement );
-  controls.maxPolarAngle = Math.PI * 0.495;
+  controls.maxPolarAngle = Math.PI * 0.395;
   controls.target.set( 0, 10, 0 );
   controls.minDistance = 40.0;
-  controls.maxDistance = 200.0;
+  controls.maxDistance = 60.0;
   controls.update();
 
   const waterUniforms = water.material.uniforms;
