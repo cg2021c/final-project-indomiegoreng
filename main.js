@@ -23,7 +23,6 @@ class Boat {
 
   static BOAT_BLADE_LEFT = 1
   static BOAT_BLADE_MIDDLE = 2
-  static 
 
   currentState = Boat.BOAT_IDLE
 
