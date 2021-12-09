@@ -5,7 +5,9 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "postinstall": "husky install"
+    "prepare": "husky install",
+    "format:check": "prettier -c **/*.{js,jsx,ts,tsx,html,css,json}",
+    "format": "prettier -w **/*.{js,jsx,ts,tsx,html,css,json}"
   },
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
@@ -17,5 +19,10 @@
   },
   "dependencies": {
     "three": "^0.134.0"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx,html,css,json}": [
+      "npx prettier --write"
+    ]
   }
 }
