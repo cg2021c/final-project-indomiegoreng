@@ -1,4 +1,4 @@
-const timer = document.getElementById("timer");
+const timer = document.getElementById('timer');
 
 var min = 0;
 var sec = 0;
@@ -32,8 +32,8 @@ setInterval(() => {
   }
 
   if (min > 0) {
-    timer.innerHTML = "TIME: " + min + "m " + sec + "s";
+    timer.innerHTML = 'TIME: ' + min + 'm ' + sec + 's';
   } else {
-    timer.innerHTML = "TIME: " + sec + "s";
+    timer.innerHTML = 'TIME: ' + sec + 's';
   }
 }, 1000);

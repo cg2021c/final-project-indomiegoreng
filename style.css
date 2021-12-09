@@ -22,7 +22,7 @@ body {
   height: 100vh;
   margin: 0;
   color: #fff;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 /*--------------------
@@ -96,7 +96,7 @@ Leaderboard
 }
 .leaderboard ol li mark::before,
 .leaderboard ol li mark::after {
-  content: "";
+  content: '';
   position: absolute;
   z-index: 1;
   bottom: -11px;
@@ -119,7 +119,7 @@ Leaderboard
   text-align: right;
 }
 .leaderboard ol li::after {
-  content: "";
+  content: '';
   position: absolute;
   z-index: 1;
   top: 0;
