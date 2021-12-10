@@ -27,4 +27,13 @@ export default class Trash {
     this.trashModel = trashModel;
     this.taken = false;
   }
+  static async createTrash(scene, loader) {
+    if (!this.trashModel) {
+      this.trashModel = await IndomieUtils.loadModel(
+        loader,
+        'assets/trash/scene.gltf',
+      );
+    }
+    return new this(scene, this.trashModel.clone());
+  }
 }

@@ -18,12 +18,6 @@ let boat = null;
 const loader = new GLTFLoader();
 
 let boatModel = null;
-async function createTrash(scene) {
-  if (!boatModel) {
-    boatModel = await IndomieUtils.loadModel(loader, 'assets/trash/scene.gltf');
-  }
-  return new Trash(scene, boatModel.clone());
-}
 
 let trashes = [];
 const TRASH_COUNT = 500;
@@ -70,7 +64,7 @@ async function init() {
   const waterUniforms = water.material.uniforms;
 
   for (let i = 0; i < TRASH_COUNT; i++) {
-    const trash = await createTrash(scene);
+    const trash = await Trash.createTrash(scene, loader);
     trashes.push(trash);
   }
 
