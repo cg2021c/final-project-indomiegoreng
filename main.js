@@ -7,31 +7,13 @@ import { Water } from 'three/examples/jsm/objects/Water.js';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import Boat from './classes/Boat.js';
+import Trash from './classes/Trash.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
 let boat = null;
 
 const loader = new GLTFLoader();
-
-function random(min, max) {
-  return Math.random() * (max - min) + min;
-}
-
-class Trash {
-  constructor(_scene) {
-    scene.add(_scene);
-    _scene.scale.set(1.5, 1.5, 1.5);
-    if (Math.random() > 0.6) {
-      _scene.position.set(random(-100, 100), -0.5, random(-100, 100));
-    } else {
-      _scene.position.set(random(-500, 500), -0.5, random(-1000, 1000));
-    }
-
-    this.trash = _scene;
-    this.taken = false;
-  }
-}
 
 async function loadModel(url) {
   return new Promise((resolve, reject) => {
@@ -42,11 +24,11 @@ async function loadModel(url) {
 }
 
 let boatModel = null;
-async function createTrash() {
+async function createTrash(scene) {
   if (!boatModel) {
     boatModel = await loadModel('assets/trash/scene.gltf');
   }
-  return new Trash(boatModel.clone());
+  return new Trash(scene, boatModel.clone());
 }
 
 let trashes = [];
@@ -141,7 +123,7 @@ async function init() {
   const waterUniforms = water.material.uniforms;
 
   for (let i = 0; i < TRASH_COUNT; i++) {
-    const trash = await createTrash();
+    const trash = await createTrash(scene);
     trashes.push(trash);
   }
 
@@ -187,9 +169,9 @@ function isColliding(obj1, obj2) {
 function checkCollisions() {
   if (boat.pivot) {
     trashes.forEach((trash) => {
-      if (trash.trash) {
-        if (isColliding(boat.pivot, trash.trash)) {
-          scene.remove(trash.trash);
+      if (trash.trashModel) {
+        if (isColliding(boat.pivot, trash.trashModel)) {
+          scene.remove(trash.trashModel);
           if (trash.taken == false) {
             trash.taken = true;
             boat.setScore(boat.getScore() + 1);
