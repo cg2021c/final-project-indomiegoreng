@@ -10,6 +10,7 @@ import GameSky from './classes/GameSky.js';
 import GameWater from './classes/GameWater.js';
 import GameSun from './classes/GameSun.js';
 import IndomieUtils from './classes/IndomieUtils.js';
+import BoatControl from './classes/BoatControl.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
@@ -72,24 +73,8 @@ async function init() {
 
   boat = new Boat(loader, scene, controls);
 
-  window.addEventListener('keydown', function (e) {
-    if (e.key == 'ArrowUp') {
-      boat.startAccelerating();
-    } else if (e.key == 'ArrowDown') {
-      boat.startAcceleratingBack();
-    } else if (e.key == 'ArrowRight') {
-      boat.currentBladeState = Boat.BOAT_BLADE_RIGHT;
-    } else if (e.key == 'ArrowLeft') {
-      boat.currentBladeState = Boat.BOAT_BLADE_LEFT;
-    }
-  });
-  window.addEventListener('keyup', function (e) {
-    if (e.key == 'ArrowUp' || e.key == 'ArrowDown') {
-      boat.stopAccelerating();
-    } else if (e.key == 'ArrowRight' || e.key == 'ArrowLeft') {
-      boat.currentBladeState = Boat.BOAT_BLADE_MIDDLE;
-    }
-  });
+  var boatControl = new BoatControl(window, boat);
+
   animate();
 }
 
