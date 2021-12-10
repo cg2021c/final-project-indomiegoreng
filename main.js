@@ -9,6 +9,7 @@ import Trash from './classes/Trash.js';
 import GameSky from './classes/GameSky.js';
 import GameWater from './classes/GameWater.js';
 import GameSun from './classes/GameSun.js';
+import IndomieUtils from './classes/IndomieUtils.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
@@ -16,18 +17,10 @@ let boat = null;
 
 const loader = new GLTFLoader();
 
-async function loadModel(url) {
-  return new Promise((resolve, reject) => {
-    loader.load(url, (gltf) => {
-      resolve(gltf.scene);
-    });
-  });
-}
-
 let boatModel = null;
 async function createTrash(scene) {
   if (!boatModel) {
-    boatModel = await loadModel('assets/trash/scene.gltf');
+    boatModel = await IndomieUtils.loadModel(loader, 'assets/trash/scene.gltf');
   }
   return new Trash(scene, boatModel.clone());
 }
