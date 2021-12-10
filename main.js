@@ -3,11 +3,12 @@ import './style.css';
 import * as THREE from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { Water } from 'three/examples/jsm/objects/Water.js';
-import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import Boat from './classes/Boat.js';
 import Trash from './classes/Trash.js';
+import GameSky from './classes/GameSky.js';
+import GameWater from './classes/GameWater.js';
+import GameSun from './classes/GameSun.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
@@ -53,65 +54,18 @@ async function init() {
   );
   camera.position.set(30, 30, 100);
 
-  sun = new THREE.Vector3();
+  // Sun
+  sun = new GameSun(scene, renderer);
 
   // Water
-
-  const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
-
-  water = new Water(waterGeometry, {
-    textureWidth: 512,
-    textureHeight: 512,
-    waterNormals: new THREE.TextureLoader().load(
-      'assets/water/water.jpg',
-      function (texture) {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      },
-    ),
-    sunDirection: new THREE.Vector3(),
-    sunColor: 0xffffff,
-    waterColor: 0x001e0f,
-    distortionScale: 3.7,
-    fog: scene.fog !== undefined,
-  });
-
-  water.rotation.x = -Math.PI / 2;
-
+  water = new GameWater(scene);
   scene.add(water);
 
   // Skybox
-
-  const sky = new Sky();
-  sky.scale.setScalar(10000);
+  const sky = new GameSky();
   scene.add(sky);
 
-  const skyUniforms = sky.material.uniforms;
-
-  skyUniforms['turbidity'].value = 10;
-  skyUniforms['rayleigh'].value = 2;
-  skyUniforms['mieCoefficient'].value = 0.005;
-  skyUniforms['mieDirectionalG'].value = 0.8;
-
-  const parameters = {
-    elevation: 2,
-    azimuth: 180,
-  };
-
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-
-  function updateSun() {
-    const phi = THREE.MathUtils.degToRad(90 - parameters.elevation);
-    const theta = THREE.MathUtils.degToRad(parameters.azimuth);
-
-    sun.setFromSphericalCoords(1, phi, theta);
-
-    sky.material.uniforms['sunPosition'].value.copy(sun);
-    water.material.uniforms['sunDirection'].value.copy(sun).normalize();
-
-    scene.environment = pmremGenerator.fromScene(sky).texture;
-  }
-
-  updateSun();
+  sun.update(sky, water);
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.maxPolarAngle = Math.PI * 0.395;
