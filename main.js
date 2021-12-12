@@ -11,6 +11,7 @@ import GameWater from './classes/GameWater.js';
 import GameSun from './classes/GameSun.js';
 import IndomieUtils from './classes/IndomieUtils.js';
 import BoatControl from './classes/BoatControl.js';
+import updateScore from './js/score.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
@@ -102,6 +103,7 @@ function checkCollisions() {
             trash.taken = true;
             boat.setScore(boat.getScore() + 1);
             console.log(boat.score);
+            updateScore(boat.score);
           }
         }
       }

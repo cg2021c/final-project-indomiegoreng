@@ -1,39 +1,21 @@
-const timer = document.getElementById('timer');
+function startTimer(duration, display) {
+  var timer = duration,
+    minutes,
+    seconds;
+  setInterval(function () {
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
 
-var min = 0;
-var sec = 0;
+    if (minutes > 0)
+      display.textContent = 'TIME: ' + minutes + 'm ' + seconds + 's';
+    else display.textContent = 'TIME: ' + seconds + 's';
 
-function startTimer() {
-  timerCycle();
+    if (--timer < 0) {
+      alert('Time is up');
+    }
+  }, 1000);
 }
 
-setInterval(() => {
-  sec = parseInt(sec);
-  min = parseInt(min);
-
-  sec = sec + 1;
-
-  if (sec == 60) {
-    min = min + 1;
-    sec = 0;
-  }
-  if (min == 60) {
-    hr = hr + 1;
-    min = 0;
-    sec = 0;
-  }
-
-  if (sec < 10 || sec == 0) {
-    sec = sec;
-  }
-
-  if (min < 10 || min == 0) {
-    min = min;
-  }
-
-  if (min > 0) {
-    timer.innerHTML = 'TIME: ' + min + 'm ' + sec + 's';
-  } else {
-    timer.innerHTML = 'TIME: ' + sec + 's';
-  }
-}, 1000);
+var duration = 60 * 5;
+var timerElem = document.querySelector('#timer');
+startTimer(duration, timerElem);
