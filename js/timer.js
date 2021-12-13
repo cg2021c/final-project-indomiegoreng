@@ -1,8 +1,13 @@
-export function startTimer(duration, display) {
-  var timer = duration,
-    minutes,
-    seconds;
-  setInterval(function () {
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '../firebase';
+
+export function startTimer(boat, duration, display) {
+  let minutes,
+    seconds,
+    timer = duration;
+  const scoreCollectionRef = collection(db, 'score');
+
+  const countdown = setInterval(async function () {
     minutes = parseInt(timer / 60, 10);
     seconds = parseInt(timer % 60, 10);
 
@@ -11,7 +16,12 @@ export function startTimer(duration, display) {
     else display.textContent = 'TIME: ' + seconds + 's';
 
     if (--timer < 0) {
-      alert('Time is up');
+      await addDoc(scoreCollectionRef, {
+        name: sessionStorage.getItem('current-user'),
+        score: boat.score,
+      });
+      alert(`Score: ${boat.score}`);
+      clearInterval(countdown);
     }
   }, 1000);
 }

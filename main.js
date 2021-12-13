@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
+
+import { db } from './firebase';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -33,32 +36,7 @@ init();
 
 async function init() {
   const playButton = document.querySelector('#play-button');
-  const nameField = document.querySelector('#name');
-  const modalOverlay = document.querySelector('#modal-overlay');
-  const modalContent = document.querySelector('#modal-content');
-  const topHud = document.querySelector('#top-hud');
-  const leaderboard = document.querySelector('#leaderboard');
-
-  const duration = 60 * 5;
-  const timerElem = document.querySelector('#timer');
-
-  playButton.addEventListener('click', () => {
-    sessionStorage.setItem('current-user', nameField.value);
-
-    modalOverlay.classList.remove('fixed');
-    modalOverlay.classList.add('hidden');
-
-    modalContent.classList.remove('inline-block');
-    modalContent.classList.add('hidden');
-
-    leaderboard.classList.remove('hidden');
-    topHud.classList.remove('hidden');
-    topHud.classList.add('flex');
-
-    setTimeout(() => {
-      startTimer(duration, timerElem);
-    }, 1000);
-  });
+  playButton.addEventListener('click', onPlayClick);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -125,6 +103,77 @@ async function init() {
   var boatControl = new BoatControl(window, boat);
 
   animate();
+}
+
+async function onPlayClick() {
+  console.log('halo');
+  const nameField = document.querySelector('#name');
+  const modalOverlay = document.querySelector('#modal-overlay');
+  const modalContent = document.querySelector('#modal-content');
+  const topHud = document.querySelector('#top-hud');
+  const leaderboard = document.querySelector('#leaderboard');
+
+  const duration = 5;
+  const timerElem = document.querySelector('#timer');
+
+  await getLeaderboardData();
+
+  sessionStorage.setItem('current-user', nameField.value);
+
+  modalOverlay.classList.remove('fixed');
+  modalOverlay.classList.add('hidden');
+
+  modalContent.classList.remove('inline-block');
+  modalContent.classList.add('hidden');
+
+  leaderboard.classList.remove('hidden');
+  topHud.classList.remove('hidden');
+  topHud.classList.add('flex');
+
+  setTimeout(() => {
+    startTimer(boat, duration, timerElem);
+  }, 1000);
+}
+
+async function getLeaderboardData() {
+  const leaderboard = document.querySelector('#leaderboard');
+  const scoreCollectionRef = collection(db, 'score');
+
+  const q = query(scoreCollectionRef, orderBy('score', 'desc'), limit(5));
+  const scoreData = await getDocs(q);
+
+  const listContainer = document.createElement('ol');
+
+  let index = 1;
+  const leaderboardStyles = [
+    '#fa6855',
+    '#e0574f',
+    '#d7514d',
+    '#cd4b4b',
+    '#c24448',
+  ];
+
+  scoreData.forEach((doc) => {
+    const listElement = `
+    <li class="flex px-4 py-3 items-center justify-between bg-[${
+      leaderboardStyles[index - 1]
+    }]">
+      <div class="flex items-center space-x-3">
+        <div
+          class="flex items-center justify-center w-5 h-5 bg-white rounded-full"
+        >
+          <p class="text-[#c24448] text-xs">${index}</p>
+        </div>
+        <mark class="text-sm">${doc.data().name}</mark>
+      </div>
+      <small>${doc.data().score}</small>
+    </li>`;
+
+    listContainer.insertAdjacentHTML('beforeend', listElement);
+    index++;
+  });
+
+  leaderboard.appendChild(listContainer);
 }
 
 function onWindowResize() {
