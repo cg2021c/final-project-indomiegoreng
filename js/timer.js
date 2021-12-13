@@ -1,4 +1,4 @@
-function startTimer(duration, display) {
+export function startTimer(duration, display) {
   var timer = duration,
     minutes,
     seconds;
@@ -15,7 +15,3 @@ function startTimer(duration, display) {
     }
   }, 1000);
 }
-
-var duration = 60 * 5;
-var timerElem = document.querySelector('#timer');
-startTimer(duration, timerElem);

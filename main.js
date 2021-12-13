@@ -13,6 +13,7 @@ import Box from './classes/Box.js';
 import Crate from './classes/Crate.js';
 import Refrigerator from './classes/Refrigerator.js';
 import updateScore from './js/score.js';
+import { startTimer } from './js/timer.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
@@ -31,6 +32,34 @@ const REFRIGERATOR_COUNT = 10;
 init();
 
 async function init() {
+  const playButton = document.querySelector('#play-button');
+  const nameField = document.querySelector('#name');
+  const modalOverlay = document.querySelector('#modal-overlay');
+  const modalContent = document.querySelector('#modal-content');
+  const topHud = document.querySelector('#top-hud');
+  const leaderboard = document.querySelector('#leaderboard');
+
+  const duration = 60 * 5;
+  const timerElem = document.querySelector('#timer');
+
+  playButton.addEventListener('click', () => {
+    sessionStorage.setItem('current-user', nameField.value);
+
+    modalOverlay.classList.remove('fixed');
+    modalOverlay.classList.add('hidden');
+
+    modalContent.classList.remove('inline-block');
+    modalContent.classList.add('hidden');
+
+    leaderboard.classList.remove('hidden');
+    topHud.classList.remove('hidden');
+    topHud.classList.add('flex');
+
+    setTimeout(() => {
+      startTimer(duration, timerElem);
+    }, 1000);
+  });
+
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
