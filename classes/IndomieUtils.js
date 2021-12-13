@@ -5,7 +5,11 @@
  */
 export default class IndomieUtils {
   static random(min, max) {
-    return Math.random() * (max - min) + min;
+    var result = 0;
+    do {
+      result = Math.random() * (max - min) + min;
+    } while (result < 8 && result > -8);
+    return result;
   }
   static async loadModel(loader, url) {
     return new Promise((resolve, reject) => {

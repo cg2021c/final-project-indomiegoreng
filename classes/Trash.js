@@ -10,11 +10,11 @@ export default class Trash {
   constructor(scene, trashModel) {
     scene.add(trashModel);
     trashModel.scale.set(1.5, 1.5, 1.5);
-    if (Math.random() > 0.6) {
+    if (Math.random() > 0.9) {
       trashModel.position.set(
-        IndomieUtils.random(-100, 100),
+        IndomieUtils.random(-200, 200),
         -0.5,
-        IndomieUtils.random(-100, 100),
+        IndomieUtils.random(-200, 200),
       );
     } else {
       trashModel.position.set(
