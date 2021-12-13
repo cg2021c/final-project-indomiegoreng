@@ -14,6 +14,7 @@ import BoatControl from './classes/BoatControl.js';
 import Box from './classes/Box.js';
 import Crate from './classes/Crate.js';
 import Refrigerator from './classes/Refrigerator.js';
+import updateScore from './js/score.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
@@ -123,6 +124,7 @@ function checkCollisions() {
             trash.taken = true;
             boat.setScore(boat.getScore() + 1);
             console.log(boat.score);
+            updateScore(boat.score);
           }
         }
       }
@@ -135,6 +137,7 @@ function checkCollisions() {
             box.taken = true;
             boat.setScore(boat.getScore() + 1);
             console.log(boat.score);
+            updateScore(boat.score);
           }
         }
       }
@@ -147,6 +150,7 @@ function checkCollisions() {
             crate.taken = true;
             boat.setScore(boat.getScore() + 1);
             console.log(boat.score);
+            updateScore(boat.score);
           }
         }
       }
@@ -159,6 +163,7 @@ function checkCollisions() {
             refrigerator.taken = true;
             boat.setScore(boat.getScore() + 1);
             console.log(boat.score);
+            updateScore(boat.score);
           }
         }
       }
