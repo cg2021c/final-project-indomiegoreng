@@ -2,47 +2,93 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
     <title>Seas</title>
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
 
-  <body>
+  <body class="relative">
     <div id="app"></div>
+    <div
+      class="hidden px-4 py-3 space-x-10 rounded-lg absolute top-3 left-[50%] -translate-x-2/4 bg-gray-700/30"
+      id="top-hud"
+    >
+      <p class="text-white" id="timer">TIME: 0s</p>
+      <p class="text-white" id="score">SCORE: 0</p>
+    </div>
+
     <div class="timer-score">
       <div id="timer">TIME: 0s</div>
       <div>&emsp; &emsp;</div>
       <div id="score">SCORE: 0</div>
     </div>
 
-    <!-- source = https://codepen.io/FRADAR/pen/QWvPXwQ?editors=0100 -->
-    <div class="leaderboard">
-      <h1>
-        <svg class="ico-cup">
+    <div
+      class="hidden overflow-hidden top-3 right-3 absolute bg-gradient-to-b from-[#3a404d] to-[#181c26] w-[15%] rounded-lg"
+      id="leaderboard"
+    >
+      <div class="flex p-4 space-x-3">
+        <svg class="w-6 h-6">
           <use xlink:href="#cup"></use>
         </svg>
-        High Scores
-      </h1>
+        <h2 class="font-bold text-white">High Scores</h2>
+      </div>
       <ol>
-        <li>
-          <mark>Daniel</mark>
+        <li class="flex px-4 py-3 items-center justify-between bg-[#fa6855]">
+          <div class="flex items-center space-x-3">
+            <div
+              class="flex items-center justify-center w-5 h-5 bg-white rounded-full"
+            >
+              <p class="text-[#c24448] text-xs">1</p>
+            </div>
+            <mark class="text-sm">Daniel</mark>
+          </div>
           <small>50</small>
         </li>
-        <li>
-          <mark>Wisnu</mark>
+        <li class="flex px-4 py-3 items-center justify-between bg-[#e0574f]">
+          <div class="flex items-center space-x-3">
+            <div
+              class="flex items-center justify-center w-5 h-5 bg-white rounded-full"
+            >
+              <p class="text-[#c24448] text-xs">2</p>
+            </div>
+            <mark class="text-sm">Wisnu</mark>
+          </div>
           <small>30</small>
         </li>
-        <li>
-          <mark>Ryan</mark>
+        <li class="flex px-4 py-3 items-center justify-between bg-[#d7514d]">
+          <div class="flex items-center space-x-3">
+            <div
+              class="flex items-center justify-center w-5 h-5 bg-white rounded-full"
+            >
+              <p class="text-[#c24448] text-xs">3</p>
+            </div>
+            <mark class="text-sm">Ryan</mark>
+          </div>
           <small>20</small>
         </li>
-        <li>
-          <mark>-</mark>
+        <li class="flex px-4 py-3 items-center justify-between bg-[#cd4b4b]">
+          <div class="flex items-center space-x-3">
+            <div
+              class="flex items-center justify-center w-5 h-5 bg-white rounded-full"
+            >
+              <p class="text-[#c24448] text-xs">4</p>
+            </div>
+            <mark class="text-sm">-</mark>
+          </div>
           <small>-</small>
         </li>
-        <li>
-          <mark>-</mark>
+        <li class="flex px-4 py-3 items-center justify-between bg-[#c24448]">
+          <div class="flex items-center space-x-3">
+            <div
+              class="flex items-center justify-center w-5 h-5 bg-white rounded-full"
+            >
+              <p class="text-[#c24448] text-xs">5</p>
+            </div>
+            <mark class="text-sm">-</mark>
+          </div>
           <small>-</small>
         </li>
       </ol>
