@@ -48,7 +48,10 @@ init();
 
 async function init() {
   const playButton = document.querySelector('#play-button');
+  const playAgainButton = document.querySelector('#play-again');
+
   playButton.addEventListener('click', onPlayClick);
+  playAgainButton.addEventListener('click', onPlayAgainClick);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -326,6 +329,8 @@ function startTimer(boat, duration, display) {
         name: sessionStorage.getItem('current-user'),
         score: boat.score,
       });
+      boat.setScore(0);
+      onTimesUp();
       console.log(`Score: ${boat.score}`);
       clearInterval(countdown);
     }
@@ -335,6 +340,66 @@ function startTimer(boat, duration, display) {
 function updateScore(score) {
   const scoreElem = document.querySelector('#score');
   scoreElem.textContent = 'SCORE: ' + score;
+}
+
+function onTimesUp() {
+  console.log('halo');
+
+  const modalOverlay = document.querySelector('#modal-overlay-end');
+  const modalContent = document.querySelector('#modal-content-end');
+  const topHud = document.querySelector('#top-hud');
+  const leaderboard = document.querySelector('#leaderboard');
+
+  // await getLeaderboardData();
+
+  modalOverlay.classList.remove('hidden');
+  modalOverlay.classList.add('fixed');
+
+  modalContent.classList.remove('hidden');
+  modalContent.classList.add('inline-block');
+
+  topHud.classList.remove('flex');
+  leaderboard.classList.add('hidden');
+  topHud.classList.add('hidden');
+
+  var boatControl = new BoatControl(window, boat);
+
+  setTimeout(() => {
+    isPlaying = false;
+    animate();
+  }, 1000);
+}
+
+async function onPlayAgainClick() {
+  console.log('halo');
+
+  const modalOverlay = document.querySelector('#modal-overlay-end');
+  const modalContent = document.querySelector('#modal-content-end');
+  const topHud = document.querySelector('#top-hud');
+  const leaderboard = document.querySelector('#leaderboard');
+
+  const duration = 8;
+  const timerElem = document.querySelector('#timer');
+
+  // await getLeaderboardData();
+
+  modalOverlay.classList.remove('fixed');
+  modalOverlay.classList.add('hidden');
+
+  modalContent.classList.remove('inline-block');
+  modalContent.classList.add('hidden');
+
+  leaderboard.classList.remove('hidden');
+  topHud.classList.remove('hidden');
+  topHud.classList.add('flex');
+
+  var boatControl = new BoatControl(window, boat);
+
+  setTimeout(() => {
+    isPlaying = true;
+    animate();
+    startTimer(boat, duration, timerElem);
+  }, 1000);
 }
 
 function animate() {
