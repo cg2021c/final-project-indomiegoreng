@@ -7,7 +7,7 @@ import * as THREE from 'three';
  */
 export default class GameSun extends THREE.Vector3 {
   parameters = {
-    elevation: 2,
+    elevation: 5,
     azimuth: 180,
   };
   pmremGenerator = null;

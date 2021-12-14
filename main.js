@@ -27,8 +27,13 @@ const loader = new GLTFLoader();
 let boatModel = null;
 
 let trashes = [];
-const TRASH_COUNT = 500;
-const BOX_COUNT = 200;
+
+// Please fix this lol
+let trashCollectedSound = null;
+let trashCollectedSoundLoader = null;
+
+const TRASH_COUNT = 100;
+const BOX_COUNT = 50;
 const CRATE_COUNT = 50;
 const REFRIGERATOR_COUNT = 10;
 
@@ -53,6 +58,40 @@ async function init() {
     20000,
   );
   camera.position.set(30, 30, 100);
+
+  // Load audio
+  let listener = new THREE.AudioListener();
+  camera.add(listener);
+
+  let oceanSound = new THREE.Audio(listener);
+  let oceanSoundLoader = new THREE.AudioLoader().load(
+    'assets/audio/calm-sea.mp3',
+    (result) => {
+      oceanSound.setBuffer(result);
+      oceanSound.setVolume(0.2);
+      oceanSound.setLoop(true);
+      oceanSound.play();
+    },
+  );
+
+  let music = new THREE.Audio(listener);
+  let musicLoder = new THREE.AudioLoader().load(
+    'assets/audio/music.mp3',
+    (result) => {
+      music.setBuffer(result);
+      music.setVolume(0.5);
+      music.setLoop(true);
+      music.play();
+    },
+  );
+
+  trashCollectedSound = new THREE.Audio(listener);
+  trashCollectedSoundLoader = new THREE.AudioLoader().load(
+    'assets/audio/trash-collected.mp3',
+    (result) => {
+      trashCollectedSound.setBuffer(result);
+    },
+  );
 
   // Sun
   sun = new GameSun(scene, renderer);
@@ -98,7 +137,7 @@ async function init() {
 
   window.addEventListener('resize', onWindowResize);
 
-  boat = new Boat(loader, scene, controls);
+  boat = new Boat(loader, scene, controls, listener);
 
   var boatControl = new BoatControl(window, boat);
 
@@ -190,6 +229,13 @@ function isColliding(obj1, obj2) {
   );
 }
 
+function playTrashCollectedSound() {
+  if (trashCollectedSound.isPlaying) {
+    trashCollectedSound.stop();
+  }
+  trashCollectedSound.play();
+}
+
 function checkCollisions() {
   if (boat.pivot) {
     trashes.forEach((trash) => {
@@ -197,6 +243,7 @@ function checkCollisions() {
         if (isColliding(boat.pivot, trash.trashModel)) {
           scene.remove(trash.trashModel);
           if (trash.taken == false) {
+            playTrashCollectedSound();
             trash.taken = true;
             boat.setScore(boat.getScore() + 1);
             console.log(boat.score);
@@ -210,6 +257,7 @@ function checkCollisions() {
         if (isColliding(boat.pivot, box.boxModel)) {
           scene.remove(box.boxModel);
           if (box.taken == false) {
+            playTrashCollectedSound();
             box.taken = true;
             boat.setScore(boat.getScore() + 1);
             console.log(boat.score);
@@ -223,6 +271,7 @@ function checkCollisions() {
         if (isColliding(boat.pivot, crate.crateModel)) {
           scene.remove(crate.crateModel);
           if (crate.taken == false) {
+            playTrashCollectedSound();
             crate.taken = true;
             boat.setScore(boat.getScore() + 1);
             console.log(boat.score);
@@ -236,6 +285,7 @@ function checkCollisions() {
         if (isColliding(boat.pivot, refrigerator.refrigeratorModel)) {
           scene.remove(refrigerator.refrigeratorModel);
           if (refrigerator.taken == false) {
+            playTrashCollectedSound();
             refrigerator.taken = true;
             boat.setScore(boat.getScore() + 1);
             console.log(boat.score);
