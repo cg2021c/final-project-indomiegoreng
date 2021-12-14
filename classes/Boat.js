@@ -162,9 +162,6 @@ export default class Boat {
             this.speed.vel = -this.maxSpeedDecel;
           }
         }
-        // console.log("Boat state is " + this.currentState)
-        // console.log("Boat Blade state is " + this.currentBladeState)
-        // console.log("Boat speed is" + this.speed.vel)
       }
 
       if (this.currentBladeState == Boat.BOAT_BLADE_RIGHT) {

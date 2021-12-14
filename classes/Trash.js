@@ -6,8 +6,8 @@
 import IndomieUtils from './IndomieUtils.js';
 
 export default class Trash {
-  taken = false;
-  constructor(scene, trashModel) {
+  isCollected = false;
+  constructor(scene, trashModel, sound, soundBuffer) {
     scene.add(trashModel);
     trashModel.scale.set(1.5, 1.5, 1.5);
     if (Math.random() > 0.9) {
@@ -25,15 +25,27 @@ export default class Trash {
     }
 
     this.trashModel = trashModel;
-    this.taken = false;
+    this.isCollected = false;
+    this.trashCollectedSound = sound;
+    this.trashCollectedSound.setBuffer(soundBuffer);
   }
-  static async createTrash(scene, loader) {
+  static async createTrash(scene, loader, url, sound, soundBuffer) {
     if (!this.trashModel) {
-      this.trashModel = await IndomieUtils.loadModel(
-        loader,
-        'assets/trash/scene.gltf',
-      );
+      this.trashModel = await IndomieUtils.loadModel(loader, url);
     }
-    return new this(scene, this.trashModel.clone());
+    return new this(scene, this.trashModel.clone(), sound, soundBuffer);
+  }
+  playTrashCollectedSound() {
+    this.stopTrashCollectedSound();
+    this.trashCollectedSound.play();
+  }
+  stopTrashCollectedSound() {
+    if (this.trashCollectedSound.isPlaying) {
+      this.trashCollectedSound.stop();
+    }
+  }
+  setToCollected() {
+    this.isCollected = true;
+    this.playTrashCollectedSound();
   }
 }
