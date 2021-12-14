@@ -54,6 +54,19 @@ async function init() {
   );
   camera.position.set(30, 30, 100);
 
+  // Load audio
+  let listener = new THREE.AudioListener();
+  camera.add(listener);
+
+  let oceanSound = new THREE.Audio(listener);
+  let soundLoader = new THREE.AudioLoader().load(
+    'assets/audio/calm-sea.mp3',
+    (result) => {
+      oceanSound.setBuffer(result);
+      oceanSound.play();
+    },
+  );
+
   // Sun
   sun = new GameSun(scene, renderer);
 
