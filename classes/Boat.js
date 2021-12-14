@@ -33,7 +33,13 @@ export default class Boat {
   dfux_y = 0.002;
   dfux_z = -0.0012;
 
-  constructor(loader, scene, controls) {
+  boatSound = null;
+  boatSoundLoader = null;
+  boatSounds = {};
+
+  constructor(loader, scene, controls, listener) {
+    this.boatSound = new THREE.Audio(listener);
+    this.boatSoundLoader = new THREE.AudioLoader();
     this.controls = controls;
     loader.load('assets/boat/scene.gltf', (gltf) => {
       scene.add(gltf.scene);
@@ -60,13 +66,45 @@ export default class Boat {
       pivot.position.set(5, 2, 50);
       this.pivot = pivot;
 
-      var axesHelper = new THREE.AxesHelper(100);
-      pivot.add(axesHelper);
+      // var axesHelper = new THREE.AxesHelper(100);
+      // pivot.add(axesHelper);
 
       // Clock
       this.clock = new THREE.Clock();
       this.clock.start();
     });
+
+    // Audio
+    this.loadAudio();
+  }
+
+  loadAudio() {
+    this.boatSoundLoader.load('assets/audio/boat-running.mp3', (result) => {
+      this.boatSounds['running'] = result;
+    });
+    this.boatSoundLoader.load('assets/audio/boat-idle.mp3', (result) => {
+      this.boatSounds['idle'] = result;
+      this.boatSound.setBuffer(result);
+      this.boatSound.setLoop(true);
+      this.boatSound.setVolume(0.2);
+      this.boatSound.play();
+    });
+  }
+
+  playAudio(soundName, loop, volume) {
+    this.stopAudio();
+    this.boatSound.setBuffer(this.boatSounds[soundName]);
+    this.boatSound.setLoop(loop);
+    this.boatSound.setVolume(volume);
+    this.boatSound.play();
+  }
+
+  stopAudio() {
+    if (this.boatSound.isPlaying) {
+      this.boatSound.setLoop(false);
+      this.boatSound.stop();
+      this.boatSound.isPlaying = false;
+    }
   }
 
   getScore() {
