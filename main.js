@@ -75,7 +75,7 @@ async function init() {
     'assets/audio/music.mp3',
     (result) => {
       music.setBuffer(result);
-      music.setVolume(0.5);
+      music.setVolume(0.3);
       music.setLoop(true);
       music.play();
     },
