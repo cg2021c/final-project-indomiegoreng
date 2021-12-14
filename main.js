@@ -96,7 +96,7 @@ async function init() {
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.maxPolarAngle = Math.PI * 0.395;
-  controls.target.set(0, 10, 0);
+  controls.target.set(0, 10, -100);
   controls.minDistance = 40.0;
   controls.maxDistance = 60.0;
   controls.update();
