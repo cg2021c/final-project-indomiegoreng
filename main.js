@@ -1,5 +1,12 @@
 import * as THREE from 'three';
-import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  addDoc,
+  limit,
+  orderBy,
+  query,
+} from 'firebase/firestore';
 
 import { db } from './firebase';
 
@@ -15,12 +22,12 @@ import BoatControl from './classes/BoatControl.js';
 import Box from './classes/Box.js';
 import Crate from './classes/Crate.js';
 import Refrigerator from './classes/Refrigerator.js';
-import updateScore from './js/score.js';
-import { startTimer } from './js/timer.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
 let boat = null;
+
+let isPlaying = false;
 
 const loader = new GLTFLoader();
 
@@ -138,21 +145,18 @@ async function init() {
   window.addEventListener('resize', onWindowResize);
 
   boat = new Boat(loader, scene, controls, listener);
-
-  var boatControl = new BoatControl(window, boat);
-
-  animate();
 }
 
 async function onPlayClick() {
   console.log('halo');
+
   const nameField = document.querySelector('#name');
   const modalOverlay = document.querySelector('#modal-overlay');
   const modalContent = document.querySelector('#modal-content');
   const topHud = document.querySelector('#top-hud');
   const leaderboard = document.querySelector('#leaderboard');
 
-  const duration = 5;
+  const duration = 8;
   const timerElem = document.querySelector('#timer');
 
   await getLeaderboardData();
@@ -169,7 +173,11 @@ async function onPlayClick() {
   topHud.classList.remove('hidden');
   topHud.classList.add('flex');
 
+  var boatControl = new BoatControl(window, boat);
+
   setTimeout(() => {
+    isPlaying = true;
+    animate();
     startTimer(boat, duration, timerElem);
   }, 1000);
 }
@@ -297,8 +305,40 @@ function checkCollisions() {
   }
 }
 
+function startTimer(boat, duration, display) {
+  console.log(isPlaying);
+  let minutes,
+    seconds,
+    timer = duration;
+  const scoreCollectionRef = collection(db, 'score');
+
+  const countdown = setInterval(async function () {
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
+
+    if (minutes > 0)
+      display.textContent = 'TIME: ' + minutes + 'm ' + seconds + 's';
+    else display.textContent = 'TIME: ' + seconds + 's';
+
+    if (--timer < 0) {
+      isPlaying = false;
+      await addDoc(scoreCollectionRef, {
+        name: sessionStorage.getItem('current-user'),
+        score: boat.score,
+      });
+      console.log(`Score: ${boat.score}`);
+      clearInterval(countdown);
+    }
+  }, 1000);
+}
+
+function updateScore(score) {
+  const scoreElem = document.querySelector('#score');
+  scoreElem.textContent = 'SCORE: ' + score;
+}
+
 function animate() {
-  requestAnimationFrame(animate);
+  if (isPlaying) requestAnimationFrame(animate);
   render();
   boat.update();
   checkCollisions();
