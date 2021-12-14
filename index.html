@@ -2,50 +2,96 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
     <title>Seas</title>
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
 
-  <body>
+  <body class="relative">
     <div id="app"></div>
-    <div class="timer-score">
-      <div id="timer">TIME: 0s</div>
-      <div>&emsp; &emsp;</div>
-      <div id="score">SCORE: 0</div>
+    <div
+      class="hidden px-4 py-3 space-x-10 rounded-lg absolute top-3 left-[50%] -translate-x-2/4 bg-gray-700/30"
+      id="top-hud"
+    >
+      <p class="text-white" id="timer">TIME: 0s</p>
+      <p class="text-white" id="score">SCORE: 0</p>
     </div>
 
-    <!-- source = https://codepen.io/FRADAR/pen/QWvPXwQ?editors=0100 -->
-    <div class="leaderboard">
-      <h1>
-        <svg class="ico-cup">
+    <div
+      class="absolute inset-0 z-10 overflow-y-auto"
+      aria-labelledby="modal-title"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div
+          class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+          id="modal-overlay"
+          aria-hidden="true"
+        ></div>
+
+        <span
+          class="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true"
+        >
+          &#8203;
+        </span>
+
+        <div
+          class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-gray-300 rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6"
+          id="modal-content"
+        >
+          <div>
+            <div>
+              <h1
+                class="text-lg font-bold leading-6 text-center text-gray-900"
+                id="modal-title"
+              >
+                TraShip
+              </h1>
+              <div class="mt-2">
+                <p class="text-sm text-left text-gray-500">
+                  Please enter your name below:
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-2">
+            <label for="name" class="sr-only"> Name </label>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-400 focus:border-orange-400 sm:text-sm"
+            />
+          </div>
+          <div class="mt-4">
+            <button
+              type="button"
+              id="play-button"
+              class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-orange-400 border border-transparent rounded-md shadow-sm hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 sm:text-sm"
+            >
+              PLAY
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="hidden overflow-hidden top-3 right-3 absolute bg-gradient-to-b from-[#3a404d] to-[#181c26] w-[15%] rounded-lg"
+      id="leaderboard"
+    >
+      <div class="flex p-4 space-x-3">
+        <svg class="w-6 h-6">
           <use xlink:href="#cup"></use>
         </svg>
-        High Scores
-      </h1>
-      <ol>
-        <li>
-          <mark>Daniel</mark>
-          <small>50</small>
-        </li>
-        <li>
-          <mark>Wisnu</mark>
-          <small>30</small>
-        </li>
-        <li>
-          <mark>Ryan</mark>
-          <small>20</small>
-        </li>
-        <li>
-          <mark>-</mark>
-          <small>-</small>
-        </li>
-        <li>
-          <mark>-</mark>
-          <small>-</small>
-        </li>
-      </ol>
+        <h2 class="font-bold text-white">High Scores</h2>
+      </div>
     </div>
 
     <svg style="display: none">
