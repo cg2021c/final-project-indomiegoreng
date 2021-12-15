@@ -39,10 +39,14 @@ let trashes = [];
 let trashCollectedSound = null;
 let trashCollectedSoundLoader = null;
 
+let gameOverSound = null;
+let gameOverSoundLoader = null;
+
 const TRASH_COUNT = 100;
 const BOX_COUNT = 50;
 const CRATE_COUNT = 50;
 const REFRIGERATOR_COUNT = 10;
+const GAME_DURATION = 1 * 60;
 
 init();
 
@@ -103,6 +107,14 @@ async function init() {
     },
   );
 
+  gameOverSound = new THREE.Audio(listener);
+  gameOverSoundLoader = new THREE.AudioLoader().load(
+    'assets/audio/game-over.mp3',
+    (result) => {
+      gameOverSound.setBuffer(result);
+    },
+  );
+
   // Sun
   sun = new GameSun(scene, renderer);
 
@@ -159,7 +171,6 @@ async function onPlayClick() {
   const topHud = document.querySelector('#top-hud');
   const leaderboard = document.querySelector('#leaderboard');
 
-  const duration = 8;
   const timerElem = document.querySelector('#timer');
 
   await getLeaderboardData();
@@ -181,7 +192,7 @@ async function onPlayClick() {
   setTimeout(() => {
     isPlaying = true;
     animate();
-    startTimer(boat, duration, timerElem);
+    startTimer(boat, GAME_DURATION, timerElem);
   }, 1000);
 }
 
@@ -337,6 +348,7 @@ function startTimer(boat, duration, display) {
         name: sessionStorage.getItem('current-user'),
         score: boat.score,
       });
+      gameOverSound.play();
       resetState();
       onTimesUp();
       console.log(`Score: ${boat.score}`);
@@ -391,7 +403,6 @@ async function onPlayAgainClick() {
   const topHud = document.querySelector('#top-hud');
   const leaderboard = document.querySelector('#leaderboard');
 
-  const duration = 8;
   const timerElem = document.querySelector('#timer');
 
   await updateLeaderBoard();
@@ -411,7 +422,7 @@ async function onPlayAgainClick() {
   setTimeout(() => {
     isPlaying = true;
     animate();
-    startTimer(boat, duration, timerElem);
+    startTimer(boat, GAME_DURATION, timerElem);
   }, 1000);
 }
 
