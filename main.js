@@ -35,10 +35,6 @@ let boatModel = null;
 
 let trashes = [];
 
-// Please fix this lol
-let trashCollectedSound = null;
-let trashCollectedSoundLoader = null;
-
 let gameOverSound = null;
 let gameOverSoundLoader = null;
 
@@ -93,17 +89,9 @@ async function init() {
     'assets/audio/music.mp3',
     (result) => {
       music.setBuffer(result);
-      music.setVolume(0.5);
+      music.setVolume(0.3);
       music.setLoop(true);
       music.play();
-    },
-  );
-
-  trashCollectedSound = new THREE.Audio(listener);
-  trashCollectedSoundLoader = new THREE.AudioLoader().load(
-    'assets/audio/trash-collected.mp3',
-    (result) => {
-      trashCollectedSound.setBuffer(result);
     },
   );
 
@@ -130,31 +118,63 @@ async function init() {
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.maxPolarAngle = Math.PI * 0.395;
-  controls.target.set(0, 10, 0);
+  controls.target.set(0, 10, -100);
   controls.minDistance = 40.0;
   controls.maxDistance = 60.0;
   controls.update();
 
   const waterUniforms = water.material.uniforms;
 
-  for (let i = 0; i < TRASH_COUNT; i++) {
-    const trash = await Trash.createTrash(scene, loader);
-    trashes.push(trash);
+  let trashCollectedSoundBuffer = null;
+  let trashCollectedSoundLoader = new THREE.AudioLoader().load(
+    'assets/audio/trash-collected.mp3',
+    (result) => {
+      trashCollectedSoundBuffer = result;
+    },
+  );
+
+  for (let i = 0; i < REFRIGERATOR_COUNT; i++) {
+    const refrigerator = await Refrigerator.createTrash(
+      scene,
+      loader,
+      'assets/refrigerator/scene.gltf',
+      new THREE.Audio(listener),
+      trashCollectedSoundBuffer,
+    );
+    trashes.push(refrigerator);
   }
 
   for (let i = 0; i < BOX_COUNT; i++) {
-    const box = await Box.createBox(scene, loader);
+    const box = await Box.createTrash(
+      scene,
+      loader,
+      'assets/box/scene.gltf',
+      new THREE.Audio(listener),
+      trashCollectedSoundBuffer,
+    );
     trashes.push(box);
   }
 
   for (let i = 0; i < CRATE_COUNT; i++) {
-    const crate = await Crate.createCrate(scene, loader);
+    const crate = await Crate.createTrash(
+      scene,
+      loader,
+      'assets/crate/scene.gltf',
+      new THREE.Audio(listener),
+      trashCollectedSoundBuffer,
+    );
     trashes.push(crate);
   }
 
-  for (let i = 0; i < REFRIGERATOR_COUNT; i++) {
-    const refrigerator = await Refrigerator.createRefrigerator(scene, loader);
-    trashes.push(refrigerator);
+  for (let i = 0; i < TRASH_COUNT; i++) {
+    const trash = await Trash.createTrash(
+      scene,
+      loader,
+      'assets/trash/scene.gltf',
+      new THREE.Audio(listener),
+      trashCollectedSoundBuffer,
+    );
+    trashes.push(trash);
   }
 
   window.addEventListener('resize', onWindowResize);
@@ -163,8 +183,6 @@ async function init() {
 }
 
 async function onPlayClick() {
-  console.log('halo');
-
   const nameField = document.querySelector('#name');
   const modalOverlay = document.querySelector('#modal-overlay');
   const modalContent = document.querySelector('#modal-content');
@@ -259,66 +277,15 @@ function isColliding(obj1, obj2) {
   );
 }
 
-function playTrashCollectedSound() {
-  if (trashCollectedSound.isPlaying) {
-    trashCollectedSound.stop();
-  }
-  trashCollectedSound.play();
-}
-
 function checkCollisions() {
   if (boat.pivot) {
     trashes.forEach((trash) => {
       if (trash.trashModel) {
         if (isColliding(boat.pivot, trash.trashModel)) {
           scene.remove(trash.trashModel);
-          if (trash.taken == false) {
-            playTrashCollectedSound();
-            trash.taken = true;
+          if (trash.isCollected == false) {
+            trash.setToCollected();
             boat.setScore(boat.getScore() + 1);
-            console.log(boat.score);
-            updateScore(boat.score);
-          }
-        }
-      }
-    });
-    trashes.forEach((box) => {
-      if (box.boxModel) {
-        if (isColliding(boat.pivot, box.boxModel)) {
-          scene.remove(box.boxModel);
-          if (box.taken == false) {
-            playTrashCollectedSound();
-            box.taken = true;
-            boat.setScore(boat.getScore() + 1);
-            console.log(boat.score);
-            updateScore(boat.score);
-          }
-        }
-      }
-    });
-    trashes.forEach((crate) => {
-      if (crate.crateModel) {
-        if (isColliding(boat.pivot, crate.crateModel)) {
-          scene.remove(crate.crateModel);
-          if (crate.taken == false) {
-            playTrashCollectedSound();
-            crate.taken = true;
-            boat.setScore(boat.getScore() + 1);
-            console.log(boat.score);
-            updateScore(boat.score);
-          }
-        }
-      }
-    });
-    trashes.forEach((refrigerator) => {
-      if (refrigerator.refrigeratorModel) {
-        if (isColliding(boat.pivot, refrigerator.refrigeratorModel)) {
-          scene.remove(refrigerator.refrigeratorModel);
-          if (refrigerator.taken == false) {
-            playTrashCollectedSound();
-            refrigerator.taken = true;
-            boat.setScore(boat.getScore() + 1);
-            console.log(boat.score);
             updateScore(boat.score);
           }
         }
