@@ -226,6 +226,14 @@ async function getLeaderboardData() {
   leaderboard.appendChild(listContainer);
 }
 
+async function updateLeaderBoard() {
+  const leaderboard = document.querySelector('#leaderboard');
+  while (leaderboard.firstChild) {
+    leaderboard.removeChild(leaderboard.lastChild);
+  }
+  await getLeaderboardData();
+}
+
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -329,12 +337,21 @@ function startTimer(boat, duration, display) {
         name: sessionStorage.getItem('current-user'),
         score: boat.score,
       });
-      boat.setScore(0);
+      resetState();
       onTimesUp();
       console.log(`Score: ${boat.score}`);
       clearInterval(countdown);
     }
   }, 1000);
+}
+
+function resetState() {
+  const modalTitle = document.querySelector('#final-score');
+  modalTitle.textContent = `Your score is ${boat.score}`;
+
+  boat.resetState();
+
+  updateScore(0);
 }
 
 function updateScore(score) {
@@ -350,8 +367,6 @@ function onTimesUp() {
   const topHud = document.querySelector('#top-hud');
   const leaderboard = document.querySelector('#leaderboard');
 
-  // await getLeaderboardData();
-
   modalOverlay.classList.remove('hidden');
   modalOverlay.classList.add('fixed');
 
@@ -361,8 +376,6 @@ function onTimesUp() {
   topHud.classList.remove('flex');
   leaderboard.classList.add('hidden');
   topHud.classList.add('hidden');
-
-  var boatControl = new BoatControl(window, boat);
 
   setTimeout(() => {
     isPlaying = false;
@@ -381,7 +394,7 @@ async function onPlayAgainClick() {
   const duration = 8;
   const timerElem = document.querySelector('#timer');
 
-  // await getLeaderboardData();
+  await updateLeaderBoard();
 
   modalOverlay.classList.remove('fixed');
   modalOverlay.classList.add('hidden');
