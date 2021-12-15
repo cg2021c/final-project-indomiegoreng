@@ -183,6 +183,10 @@ async function init() {
 }
 
 async function onPlayClick() {
+  // Hide the game modal
+  const gameModal = document.getElementById('gameModal');
+  gameModal.style.display = 'none';
+
   const nameField = document.querySelector('#name');
   const modalOverlay = document.querySelector('#modal-overlay');
   const modalContent = document.querySelector('#modal-content');
@@ -341,6 +345,10 @@ function updateScore(score) {
 function onTimesUp() {
   console.log('halo');
 
+  // Show the game modal
+  const gameModal = document.getElementById('gameModal');
+  gameModal.style.display = 'block';
+
   const modalOverlay = document.querySelector('#modal-overlay-end');
   const modalContent = document.querySelector('#modal-content-end');
   const topHud = document.querySelector('#top-hud');
@@ -364,6 +372,9 @@ function onTimesUp() {
 
 async function onPlayAgainClick() {
   console.log('halo');
+  // Hide the game modal
+  const gameModal = document.getElementById('gameModal');
+  gameModal.style.display = 'none';
 
   const modalOverlay = document.querySelector('#modal-overlay-end');
   const modalContent = document.querySelector('#modal-content-end');
