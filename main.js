@@ -1,5 +1,12 @@
 import * as THREE from 'three';
-import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  addDoc,
+  limit,
+  orderBy,
+  query,
+} from 'firebase/firestore';
 
 import { db } from './firebase';
 
@@ -15,12 +22,12 @@ import BoatControl from './classes/BoatControl.js';
 import Box from './classes/Box.js';
 import Crate from './classes/Crate.js';
 import Refrigerator from './classes/Refrigerator.js';
-import updateScore from './js/score.js';
-import { startTimer } from './js/timer.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
 let boat = null;
+
+let isPlaying = false;
 
 const loader = new GLTFLoader();
 
@@ -28,16 +35,23 @@ let boatModel = null;
 
 let trashes = [];
 
+let gameOverSound = null;
+let gameOverSoundLoader = null;
+
 const TRASH_COUNT = 100;
 const BOX_COUNT = 50;
 const CRATE_COUNT = 50;
 const REFRIGERATOR_COUNT = 10;
+const GAME_DURATION = 1 * 60;
 
 init();
 
 async function init() {
   const playButton = document.querySelector('#play-button');
+  const playAgainButton = document.querySelector('#play-again');
+
   playButton.addEventListener('click', onPlayClick);
+  playAgainButton.addEventListener('click', onPlayAgainClick);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -78,6 +92,14 @@ async function init() {
       music.setVolume(0.3);
       music.setLoop(true);
       music.play();
+    },
+  );
+
+  gameOverSound = new THREE.Audio(listener);
+  gameOverSoundLoader = new THREE.AudioLoader().load(
+    'assets/audio/game-over.mp3',
+    (result) => {
+      gameOverSound.setBuffer(result);
     },
   );
 
@@ -158,10 +180,6 @@ async function init() {
   window.addEventListener('resize', onWindowResize);
 
   boat = new Boat(loader, scene, controls, listener);
-
-  var boatControl = new BoatControl(window, boat);
-
-  animate();
 }
 
 async function onPlayClick() {
@@ -171,7 +189,6 @@ async function onPlayClick() {
   const topHud = document.querySelector('#top-hud');
   const leaderboard = document.querySelector('#leaderboard');
 
-  const duration = 5;
   const timerElem = document.querySelector('#timer');
 
   await getLeaderboardData();
@@ -188,8 +205,12 @@ async function onPlayClick() {
   topHud.classList.remove('hidden');
   topHud.classList.add('flex');
 
+  var boatControl = new BoatControl(window, boat);
+
   setTimeout(() => {
-    startTimer(boat, duration, timerElem);
+    isPlaying = true;
+    animate();
+    startTimer(boat, GAME_DURATION, timerElem);
   }, 1000);
 }
 
@@ -234,6 +255,14 @@ async function getLeaderboardData() {
   leaderboard.appendChild(listContainer);
 }
 
+async function updateLeaderBoard() {
+  const leaderboard = document.querySelector('#leaderboard');
+  while (leaderboard.firstChild) {
+    leaderboard.removeChild(leaderboard.lastChild);
+  }
+  await getLeaderboardData();
+}
+
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -265,8 +294,107 @@ function checkCollisions() {
   }
 }
 
+function startTimer(boat, duration, display) {
+  console.log(isPlaying);
+  let minutes,
+    seconds,
+    timer = duration;
+  const scoreCollectionRef = collection(db, 'score');
+
+  const countdown = setInterval(async function () {
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
+
+    if (minutes > 0)
+      display.textContent = 'TIME: ' + minutes + 'm ' + seconds + 's';
+    else display.textContent = 'TIME: ' + seconds + 's';
+
+    if (--timer < 0) {
+      isPlaying = false;
+      await addDoc(scoreCollectionRef, {
+        name: sessionStorage.getItem('current-user'),
+        score: boat.score,
+      });
+      gameOverSound.play();
+      resetState();
+      onTimesUp();
+      console.log(`Score: ${boat.score}`);
+      clearInterval(countdown);
+    }
+  }, 1000);
+}
+
+function resetState() {
+  const modalTitle = document.querySelector('#final-score');
+  modalTitle.textContent = `Your score is ${boat.score}`;
+
+  boat.resetState();
+
+  updateScore(0);
+}
+
+function updateScore(score) {
+  const scoreElem = document.querySelector('#score');
+  scoreElem.textContent = 'SCORE: ' + score;
+}
+
+function onTimesUp() {
+  console.log('halo');
+
+  const modalOverlay = document.querySelector('#modal-overlay-end');
+  const modalContent = document.querySelector('#modal-content-end');
+  const topHud = document.querySelector('#top-hud');
+  const leaderboard = document.querySelector('#leaderboard');
+
+  modalOverlay.classList.remove('hidden');
+  modalOverlay.classList.add('fixed');
+
+  modalContent.classList.remove('hidden');
+  modalContent.classList.add('inline-block');
+
+  topHud.classList.remove('flex');
+  leaderboard.classList.add('hidden');
+  topHud.classList.add('hidden');
+
+  setTimeout(() => {
+    isPlaying = false;
+    animate();
+  }, 1000);
+}
+
+async function onPlayAgainClick() {
+  console.log('halo');
+
+  const modalOverlay = document.querySelector('#modal-overlay-end');
+  const modalContent = document.querySelector('#modal-content-end');
+  const topHud = document.querySelector('#top-hud');
+  const leaderboard = document.querySelector('#leaderboard');
+
+  const timerElem = document.querySelector('#timer');
+
+  await updateLeaderBoard();
+
+  modalOverlay.classList.remove('fixed');
+  modalOverlay.classList.add('hidden');
+
+  modalContent.classList.remove('inline-block');
+  modalContent.classList.add('hidden');
+
+  leaderboard.classList.remove('hidden');
+  topHud.classList.remove('hidden');
+  topHud.classList.add('flex');
+
+  var boatControl = new BoatControl(window, boat);
+
+  setTimeout(() => {
+    isPlaying = true;
+    animate();
+    startTimer(boat, GAME_DURATION, timerElem);
+  }, 1000);
+}
+
 function animate() {
-  requestAnimationFrame(animate);
+  if (isPlaying) requestAnimationFrame(animate);
   render();
   boat.update();
   checkCollisions();

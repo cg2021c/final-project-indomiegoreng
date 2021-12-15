@@ -28,6 +28,7 @@
       <div
         class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0"
       >
+        <!-- Start Playing  -->
         <div
           class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
           id="modal-overlay"
@@ -76,6 +77,56 @@
               class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-orange-400 border border-transparent rounded-md shadow-sm hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 sm:text-sm"
             >
               PLAY
+            </button>
+          </div>
+        </div>
+
+        <!-- Time is up. Play again -->
+        <div
+          class="hidden inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+          id="modal-overlay-end"
+          aria-hidden="true"
+        ></div>
+
+        <span
+          class="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true"
+        >
+          &#8203;
+        </span>
+
+        <div
+          class="hidden px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-gray-300 rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6"
+          id="modal-content-end"
+        >
+          <div>
+            <div>
+              <h1
+                class="text-lg font-bold leading-6 text-center text-gray-900"
+                id="modal-title-end"
+              >
+                TIME IS UP !
+              </h1>
+              <div class="mt-2">
+                <p
+                  class="text font-medium text-left text-gray-500"
+                  id="final-score"
+                >
+                  Your score is
+                </p>
+              </div>
+              <div>
+                <p class="text text-left text-gray-500">Wanna play again ?</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <button
+              type="button"
+              id="play-again"
+              class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-orange-400 border border-transparent rounded-md shadow-sm hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 sm:text-sm"
+            >
+              PLAY AGAIN
             </button>
           </div>
         </div>
@@ -128,7 +179,6 @@
       </symbol>
     </svg>
 
-    <script type="module" src="./js/timer.js"></script>
     <script type="module" src="/main.js"></script>
   </body>
 </html>

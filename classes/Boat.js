@@ -133,6 +133,16 @@ export default class Boat {
     this.currentState = Boat.BOAT_IDLE;
   }
 
+  resetState() {
+    this.dfux_x = 0.0005;
+    this.dfux_y = 0.002;
+    this.dfux_z = -0.0012;
+
+    this.stop();
+
+    this.setScore(0);
+  }
+
   update() {
     if (this.boat) {
       if (this.clock.getElapsedTime() - this.lastClock > 0.2) {
