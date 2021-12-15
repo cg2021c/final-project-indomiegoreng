@@ -282,8 +282,8 @@ function checkCollisions() {
     trashes.forEach((trash) => {
       if (trash.trashModel) {
         if (isColliding(boat.pivot, trash.trashModel)) {
-          scene.remove(trash.trashModel);
           if (trash.isCollected == false) {
+            scene.remove(trash.trashModel);
             trash.setToCollected();
             boat.setScore(boat.getScore() + 1);
             updateScore(boat.score);
