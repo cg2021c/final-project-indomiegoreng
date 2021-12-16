@@ -27,6 +27,7 @@ import Fishes from './classes/Fishes.js';
 let camera, scene, renderer;
 let controls, water, sun;
 let boat = null;
+let fishModel = null;
 
 let isPlaying = false;
 
@@ -47,8 +48,12 @@ const CRATE_COUNT = 50;
 const REFRIGERATOR_COUNT = 10;
 const GAME_DURATION = 1 * 60;
 
-init();
+loadModels();
 
+async function loadModels() {
+  fishModel = await IndomieUtils.loadModel(loader, 'assets/fishes/scene.gltf');
+  init();
+}
 async function init() {
   const playButton = document.querySelector('#play-button');
   const playAgainButton = document.querySelector('#play-again');
@@ -409,16 +414,15 @@ async function onPlayAgainClick() {
 }
 
 function spawnFishes(position) {
-  const fish = Fishes.create(scene, loader, position);
+  const fish = Fishes.create(fishModel.clone(), position);
+  scene.add(fish.fishModel);
   fishes.push(fish);
 }
 
 function animateFishes() {
   fishes.forEach((fish) => {
-    if (fish.fishesModel) {
-      const time = Date.now() * 0.0005;
-      //fishes.fishesModel.position.y = Math.cos(time) * 0.75 + 1.25;
-      console.log('fishes animated');
+    if (fish.fishModel != null) {
+      fish.move();
     }
   });
 }

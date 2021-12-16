@@ -6,21 +6,33 @@
 import IndomieUtils from './IndomieUtils.js';
 
 export default class Fishes {
-  constructor(scene, fishesModel, position) {
-    scene.add(fishesModel);
-    fishesModel.position.set(position.x, 0, position.z);
-    //fishesModel.rotation.x = Math.PI / 2;
+  velocity = 1.23;
+  constructor(fishModel, position) {
+    this.fishModel = fishModel;
 
-    this.fishesModel = fishesModel;
-    //console.log(this.fishesModel);
+    this.fishModel.position.set(position.x, 0, position.z);
+    this.fishModel.rotation.x = (90.0 / 180.0) * Math.PI;
   }
-  static async create(scene, loader, position) {
-    if (!this.fishesModel) {
-      this.fishesModel = await IndomieUtils.loadModel(
-        loader,
-        'assets/fishes/scene.gltf',
-      );
+  static create(fishModel, position) {
+    return new this(fishModel, position);
+  }
+
+  flip() {
+    let newRot = this.fishModel.rotation.x + (180.0 / 180.0) * Math.PI;
+    while (newRot > 2 * Math.PI) newRot -= 2 * Math.PI;
+    this.fishModel.rotation.x = newRot;
+  }
+
+  move() {
+    if (this.fishModel.position.y < -500.0) {
+      this.fishModel.position.y = -500.0;
+      this.velocity *= -1;
+      this.flip();
+    } else if (this.fishModel.position.y > 24.0) {
+      this.fishModel.position.y = 24.0;
+      this.velocity *= -1;
+      this.flip();
     }
-    return new this(scene, this.fishesModel.clone(), position);
+    this.fishModel.position.y += this.velocity;
   }
 }
