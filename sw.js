@@ -1,5 +1,5 @@
-const staticCacheName = 'site-static-v1';
-const dynamicCacheName = 'site-dynamic-v1';
+const staticCacheName = 'site-static-v2';
+const dynamicCacheName = 'site-dynamic-v2';
 const assets = [
   '/assets/audio/boat-idle.mp3',
   '/assets/audio/boat-running.mp3',
@@ -20,10 +20,10 @@ const assets = [
   '/assets/refrigerator/license.txt',
   '/assets/refrigerator/scene.bin',
   '/assets/refrigerator/scene.gltf',
-  // '/assets/rock/scene.bin',
-  // '/assets/rock/scene.gltf',
-  // '/assets/rock/textures/Scene_-_Root_baseColor.png',
-  // '/assets/rock/textures/Scene_-_Root_normal.png',
+  '/assets/rock/scene.bin',
+  '/assets/rock/scene.gltf',
+  '/assets/rock/textures/Scene_-_Root_baseColor.png',
+  '/assets/rock/textures/Scene_-_Root_normal.png',
   '/assets/trash/license.txt',
   '/assets/trash/scene.bin',
   '/assets/trash/scene.gltf',
