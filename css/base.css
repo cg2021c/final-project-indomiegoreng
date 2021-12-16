@@ -10,3 +10,14 @@ mark {
 small {
   color: white;
 }
+
+progress {
+  border-radius: 7px;
+}
+progress::-webkit-progress-bar {
+  border-radius: 7px;
+}
+progress::-webkit-progress-value {
+  background-color: rgb(251 146 60);
+  border-radius: 7px;
+}

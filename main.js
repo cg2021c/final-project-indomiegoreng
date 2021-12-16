@@ -207,7 +207,7 @@ async function onPlayClick() {
 
   leaderboard.classList.remove('hidden');
   topHud.classList.remove('hidden');
-  topHud.classList.add('flex');
+  topHud.classList.add('flex', 'flex-col');
 
   var boatControl = new BoatControl(window, boat);
 
