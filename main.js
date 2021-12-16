@@ -23,6 +23,7 @@ import Box from './classes/Box.js';
 import Crate from './classes/Crate.js';
 import Refrigerator from './classes/Refrigerator.js';
 import Fishes from './classes/Fishes.js';
+import Rock from './classes/Rock';
 
 let camera, scene, renderer;
 let controls, water, sun;
@@ -36,6 +37,7 @@ const loader = new GLTFLoader();
 let boatModel = null;
 
 let trashes = [];
+let rocks = [];
 
 let gameOverSound = null;
 let gameOverSoundLoader = null;
@@ -46,6 +48,7 @@ const TRASH_COUNT = 100;
 const BOX_COUNT = 50;
 const CRATE_COUNT = 50;
 const REFRIGERATOR_COUNT = 10;
+const ROCK_COUNT = 20;
 const GAME_DURATION = 1 * 60;
 
 loadModels();
@@ -192,6 +195,11 @@ async function init() {
     trashes.push(trash);
   }
 
+  for (let i = 0; i < ROCK_COUNT; i++) {
+    const rock = await Rock.createRock(scene, loader, 'assets/rock/scene.gltf');
+    rocks.push(rock);
+  }
+
   window.addEventListener('resize', onWindowResize);
 
   boat = new Boat(loader, scene, controls, listener);
@@ -289,10 +297,10 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function isColliding(obj1, obj2) {
+function isColliding(obj1, obj2, radius) {
   return (
-    Math.abs(obj1.position.x - obj2.position.x) < 15 &&
-    Math.abs(obj1.position.z - obj2.position.z) < 15
+    Math.abs(obj1.position.x - obj2.position.x) < radius &&
+    Math.abs(obj1.position.z - obj2.position.z) < radius
   );
 }
 
@@ -300,7 +308,7 @@ function checkCollisions() {
   if (boat.pivot) {
     trashes.forEach((trash) => {
       if (trash.trashModel) {
-        if (isColliding(boat.pivot, trash.trashModel)) {
+        if (isColliding(boat.pivot, trash.trashModel, 15)) {
           if (trash.isCollected == false) {
             scene.remove(trash.trashModel);
             trash.setToCollected();
@@ -308,6 +316,13 @@ function checkCollisions() {
             boat.setScore(boat.getScore() + 1);
             updateScore(boat.score);
           }
+        }
+      }
+    });
+    rocks.forEach((rock) => {
+      if (rock.rockModel) {
+        if (isColliding(boat.pivot, rock.rockModel, 17)) {
+          if (boat.currentState != Boat.BOAT_DECEL) boat.stop();
         }
       }
     });
