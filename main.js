@@ -207,7 +207,7 @@ async function onPlayClick() {
 
   leaderboard.classList.remove('hidden');
   topHud.classList.remove('hidden');
-  topHud.classList.add('flex');
+  topHud.classList.add('flex', 'flex-col');
 
   var boatControl = new BoatControl(window, boat);
 
@@ -304,6 +304,7 @@ function startTimer(boat, duration, display) {
     seconds,
     timer = duration;
   const scoreCollectionRef = collection(db, 'score');
+  const progressBar = document.querySelector('#progress-bar');
 
   const countdown = setInterval(async function () {
     minutes = parseInt(timer / 60, 10);
@@ -312,6 +313,8 @@ function startTimer(boat, duration, display) {
     if (minutes > 0)
       display.textContent = 'TIME: ' + minutes + 'm ' + seconds + 's';
     else display.textContent = 'TIME: ' + seconds + 's';
+
+    progressBar.value = (timer / GAME_DURATION) * 100;
 
     if (--timer < 0) {
       isPlaying = false;
