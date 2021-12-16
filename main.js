@@ -22,10 +22,12 @@ import BoatControl from './classes/BoatControl.js';
 import Box from './classes/Box.js';
 import Crate from './classes/Crate.js';
 import Refrigerator from './classes/Refrigerator.js';
+import Fishes from './classes/Fishes.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
 let boat = null;
+let fishModel = null;
 
 let isPlaying = false;
 
@@ -38,14 +40,20 @@ let trashes = [];
 let gameOverSound = null;
 let gameOverSoundLoader = null;
 
+let fishes = [];
+
 const TRASH_COUNT = 100;
 const BOX_COUNT = 50;
 const CRATE_COUNT = 50;
 const REFRIGERATOR_COUNT = 10;
 const GAME_DURATION = 1 * 60;
 
-init();
+loadModels();
 
+async function loadModels() {
+  fishModel = await IndomieUtils.loadModel(loader, 'assets/fishes/scene.gltf');
+  init();
+}
 async function init() {
   const playButton = document.querySelector('#play-button');
   const playAgainButton = document.querySelector('#play-again');
@@ -289,6 +297,7 @@ function checkCollisions() {
           if (trash.isCollected == false) {
             scene.remove(trash.trashModel);
             trash.setToCollected();
+            spawnFishes(trash.trashModel.position);
             boat.setScore(boat.getScore() + 1);
             updateScore(boat.score);
           }
@@ -377,10 +386,25 @@ async function onPlayAgainClick() {
   location.reload();
 }
 
+function spawnFishes(position) {
+  const fish = Fishes.create(fishModel.clone(), position);
+  scene.add(fish.fishModel);
+  fishes.push(fish);
+}
+
+function animateFishes() {
+  fishes.forEach((fish) => {
+    if (fish.fishModel != null) {
+      fish.move();
+    }
+  });
+}
+
 function animate() {
   if (isPlaying) requestAnimationFrame(animate);
   render();
   boat.update();
+  animateFishes();
   checkCollisions();
 }
 
