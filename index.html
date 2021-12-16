@@ -11,12 +11,17 @@
 
   <body class="relative">
     <div id="app"></div>
-    <div
-      class="hidden px-4 py-3 space-x-10 rounded-lg absolute top-3 left-[50%] -translate-x-2/4 bg-gray-700/30"
-      id="top-hud"
-    >
-      <p class="text-white" id="timer">TIME: 0s</p>
-      <p class="text-white" id="score">SCORE: 0</p>
+    <div class="hidden absolute top-3 left-[50%] -translate-x-2/4" id="top-hud">
+      <div class="flex px-4 py-3 space-x-10 rounded-lg bg-gray-700/30">
+        <p class="text-white" id="timer">TIME: 0s</p>
+        <p class="text-white" id="score">SCORE: 0</p>
+      </div>
+      <progress
+        id="progress-bar"
+        class="w-full mt-2"
+        value="100"
+        max="100"
+      ></progress>
     </div>
 
     <div
@@ -49,7 +54,7 @@
         >
           <div>
             <div>
-              <img class="object-contain w-24" src="favicon.svg" />
+              <img class="block w-24 mx-auto" src="favicon.svg" />
               <h1
                 class="text-lg font-bold leading-6 text-center text-gray-900"
                 id="modal-title"
@@ -85,7 +90,7 @@
 
         <!-- Time is up. Play again -->
         <div
-          class="hidden inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+          class="inset-0 hidden transition-opacity bg-gray-500 bg-opacity-75"
           id="modal-overlay-end"
           aria-hidden="true"
         ></div>
@@ -110,15 +115,12 @@
                 TIME IS UP !
               </h1>
               <div class="mt-2">
-                <p
-                  class="text font-medium text-left text-gray-500"
-                  id="final-score"
-                >
+                <p class="font-medium text-left text-gray-500" id="final-score">
                   Your score is
                 </p>
               </div>
               <div>
-                <p class="text text-left text-gray-500">Wanna play again ?</p>
+                <p class="text-left text-gray-500">Wanna play again ?</p>
               </div>
             </div>
           </div>
