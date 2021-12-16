@@ -321,8 +321,8 @@ function checkCollisions() {
     });
     rocks.forEach((rock) => {
       if (rock.rockModel) {
-        if (isColliding(boat.pivot, rock.rockModel, 19)) {
-          boat.stop();
+        if (isColliding(boat.pivot, rock.rockModel, 17)) {
+          if (boat.currentState != Boat.BOAT_DECEL) boat.stop();
         }
       }
     });
