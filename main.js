@@ -22,6 +22,7 @@ import BoatControl from './classes/BoatControl.js';
 import Box from './classes/Box.js';
 import Crate from './classes/Crate.js';
 import Refrigerator from './classes/Refrigerator.js';
+import Fishes from './classes/Fishes.js';
 
 let camera, scene, renderer;
 let controls, water, sun;
@@ -37,6 +38,8 @@ let trashes = [];
 
 let gameOverSound = null;
 let gameOverSoundLoader = null;
+
+let fishes = [];
 
 const TRASH_COUNT = 100;
 const BOX_COUNT = 50;
@@ -289,6 +292,7 @@ function checkCollisions() {
           if (trash.isCollected == false) {
             scene.remove(trash.trashModel);
             trash.setToCollected();
+            spawnFishes(trash.trashModel.position);
             boat.setScore(boat.getScore() + 1);
             updateScore(boat.score);
           }
@@ -404,10 +408,26 @@ async function onPlayAgainClick() {
   }, 1000);
 }
 
+function spawnFishes(position) {
+  const fish = Fishes.create(scene, loader, position);
+  fishes.push(fish);
+}
+
+function animateFishes() {
+  fishes.forEach((fish) => {
+    if (fish.fishesModel) {
+      const time = Date.now() * 0.0005;
+      //fishes.fishesModel.position.y = Math.cos(time) * 0.75 + 1.25;
+      console.log('fishes animated');
+    }
+  });
+}
+
 function animate() {
   if (isPlaying) requestAnimationFrame(animate);
   render();
   boat.update();
+  animateFishes();
   checkCollisions();
 }
 
