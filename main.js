@@ -55,6 +55,13 @@ async function loadModels() {
   init();
 }
 async function init() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+      .register('sw.js')
+      .then((reg) => console.log('service worker registered'))
+      .catch((err) => console.log('service worker not registered', err));
+  }
+
   const playButton = document.querySelector('#play-button');
   const playAgainButton = document.querySelector('#play-again');
 
