@@ -118,6 +118,7 @@ export default class Boat {
   stop() {
     this.speed.vel = 0;
     this.speed.rot = 0;
+    this.stopAccelerating();
   }
 
   startAccelerating() {
