@@ -371,37 +371,7 @@ function onTimesUp() {
 }
 
 async function onPlayAgainClick() {
-  console.log('halo');
-  // Hide the game modal
-  const gameModal = document.getElementById('gameModal');
-  gameModal.style.display = 'none';
-
-  const modalOverlay = document.querySelector('#modal-overlay-end');
-  const modalContent = document.querySelector('#modal-content-end');
-  const topHud = document.querySelector('#top-hud');
-  const leaderboard = document.querySelector('#leaderboard');
-
-  const timerElem = document.querySelector('#timer');
-
-  await updateLeaderBoard();
-
-  modalOverlay.classList.remove('fixed');
-  modalOverlay.classList.add('hidden');
-
-  modalContent.classList.remove('inline-block');
-  modalContent.classList.add('hidden');
-
-  leaderboard.classList.remove('hidden');
-  topHud.classList.remove('hidden');
-  topHud.classList.add('flex');
-
-  var boatControl = new BoatControl(window, boat);
-
-  setTimeout(() => {
-    isPlaying = true;
-    animate();
-    startTimer(boat, GAME_DURATION, timerElem);
-  }, 1000);
+  location.reload();
 }
 
 function animate() {
