@@ -25,6 +25,15 @@ import Refrigerator from './classes/Refrigerator.js';
 import Fishes from './classes/Fishes.js';
 import Rock from './classes/Rock';
 
+const loadingProgress = document.getElementById('loadingProgress');
+const loadingBox = document.getElementById('loadingBox');
+function setLoadingProgress(x) {
+  loadingProgress.innerHTML = x;
+}
+function destroyLoadingBox() {
+  loadingBox.remove();
+}
+
 let camera, scene, renderer;
 let controls, water, sun;
 let boat = null;
@@ -44,6 +53,7 @@ let rockModel = null;
 
 let trashes = [];
 let rocks = [];
+let fishes = [];
 
 // Music
 let listener = null;
@@ -52,8 +62,6 @@ let gameOverSoundLoader = null;
 let music = null;
 let oceanSound = null;
 let trashCollectedSound = null;
-
-let fishes = [];
 
 const TRASH_COUNT = 100;
 const BOX_COUNT = 50;
@@ -67,15 +75,21 @@ loadModels();
 async function loadModels() {
   // Load models
   boatModel = await IndomieUtils.loadModel(loader, 'assets/boat/scene.gltf');
+  setLoadingProgress(10);
   fishModel = await IndomieUtils.loadModel(loader, 'assets/fishes/scene.gltf');
+  setLoadingProgress(20);
   trashModel = await IndomieUtils.loadModel(loader, 'assets/trash/scene.gltf');
+  setLoadingProgress(30);
   crateModel = await IndomieUtils.loadModel(loader, 'assets/crate/scene.gltf');
+  setLoadingProgress(40);
   boxModel = await IndomieUtils.loadModel(loader, 'assets/box/scene.gltf');
+  setLoadingProgress(50);
   refrigeratorModel = await IndomieUtils.loadModel(
     loader,
     'assets/refrigerator/scene.gltf',
   );
   rockModel = await IndomieUtils.loadModel(loader, 'assets/rock/scene.gltf');
+  setLoadingProgress(60);
   // Load sounds
   listener = new THREE.AudioListener();
 
@@ -83,6 +97,7 @@ async function loadModels() {
   new THREE.AudioLoader().load('assets/audio/trash-collected.mp3', (result) => {
     trashCollectedSound.setBuffer(result);
   });
+  setLoadingProgress(70);
 
   let oceanSound = new THREE.Audio(listener);
   new THREE.AudioLoader().load('assets/audio/calm-sea.mp3', (result) => {
@@ -91,6 +106,7 @@ async function loadModels() {
     oceanSound.setLoop(true);
     oceanSound.play();
   });
+  setLoadingProgress(75);
   music = new THREE.Audio(listener);
   new THREE.AudioLoader().load('assets/audio/music.mp3', (result) => {
     music.setBuffer(result);
@@ -98,6 +114,7 @@ async function loadModels() {
     music.setLoop(true);
     music.play();
   });
+  setLoadingProgress(80);
   gameOverSound = new THREE.Audio(listener);
   gameOverSoundLoader = new THREE.AudioLoader().load(
     'assets/audio/game-over.mp3',
@@ -105,7 +122,8 @@ async function loadModels() {
       gameOverSound.setBuffer(result);
     },
   );
-
+  setLoadingProgress(100);
+  destroyLoadingBox();
   // Start game
   init();
 }
