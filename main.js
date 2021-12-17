@@ -28,7 +28,7 @@ import Rock from './classes/Rock';
 const loadingProgress = document.getElementById('loadingProgress');
 const loadingBox = document.getElementById('loadingBox');
 function setLoadingProgress(x) {
-  loadingProgress.innerHTML = x;
+  loadingProgress.value = x;
 }
 function destroyLoadingBox() {
   loadingBox.remove();
@@ -75,21 +75,21 @@ loadModels();
 async function loadModels() {
   // Load models
   boatModel = await IndomieUtils.loadModel(loader, 'assets/boat/scene.gltf');
-  setLoadingProgress(10);
-  fishModel = await IndomieUtils.loadModel(loader, 'assets/fishes/scene.gltf');
-  setLoadingProgress(20);
-  trashModel = await IndomieUtils.loadModel(loader, 'assets/trash/scene.gltf');
   setLoadingProgress(30);
+  fishModel = await IndomieUtils.loadModel(loader, 'assets/fishes/scene.gltf');
+  setLoadingProgress(45);
+  trashModel = await IndomieUtils.loadModel(loader, 'assets/trash/scene.gltf');
+  setLoadingProgress(60);
   crateModel = await IndomieUtils.loadModel(loader, 'assets/crate/scene.gltf');
-  setLoadingProgress(40);
+  setLoadingProgress(65);
   boxModel = await IndomieUtils.loadModel(loader, 'assets/box/scene.gltf');
-  setLoadingProgress(50);
+  setLoadingProgress(70);
   refrigeratorModel = await IndomieUtils.loadModel(
     loader,
     'assets/refrigerator/scene.gltf',
   );
   rockModel = await IndomieUtils.loadModel(loader, 'assets/rock/scene.gltf');
-  setLoadingProgress(60);
+  setLoadingProgress(85);
   // Load sounds
   listener = new THREE.AudioListener();
 
@@ -97,7 +97,7 @@ async function loadModels() {
   new THREE.AudioLoader().load('assets/audio/trash-collected.mp3', (result) => {
     trashCollectedSound.setBuffer(result);
   });
-  setLoadingProgress(70);
+  setLoadingProgress(90);
 
   let oceanSound = new THREE.Audio(listener);
   new THREE.AudioLoader().load('assets/audio/calm-sea.mp3', (result) => {
@@ -106,7 +106,7 @@ async function loadModels() {
     oceanSound.setLoop(true);
     oceanSound.play();
   });
-  setLoadingProgress(75);
+  setLoadingProgress(92);
   music = new THREE.Audio(listener);
   new THREE.AudioLoader().load('assets/audio/music.mp3', (result) => {
     music.setBuffer(result);
@@ -114,7 +114,7 @@ async function loadModels() {
     music.setLoop(true);
     music.play();
   });
-  setLoadingProgress(80);
+  setLoadingProgress(95);
   gameOverSound = new THREE.Audio(listener);
   gameOverSoundLoader = new THREE.AudioLoader().load(
     'assets/audio/game-over.mp3',
