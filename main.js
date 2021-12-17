@@ -363,7 +363,6 @@ function checkCollisions() {
 }
 
 function startTimer(boat, duration, display) {
-  console.log(isPlaying);
   let minutes,
     seconds,
     timer = duration;
@@ -389,7 +388,6 @@ function startTimer(boat, duration, display) {
       gameOverSound.play();
       resetState();
       onTimesUp();
-      console.log(`Score: ${boat.score}`);
       clearInterval(countdown);
     }
   }, 1000);
@@ -410,8 +408,6 @@ function updateScore(score) {
 }
 
 function onTimesUp() {
-  console.log('halo');
-
   // Show the game modal
   const gameModal = document.getElementById('gameModal');
   gameModal.style.display = 'block';
