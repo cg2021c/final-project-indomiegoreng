@@ -7,8 +7,7 @@ import IndomieUtils from './IndomieUtils.js';
 
 export default class Rock {
   isCollected = false;
-  constructor(scene, rockModel) {
-    scene.add(rockModel);
+  constructor(rockModel) {
     rockModel.scale.set(0.1, 0.1, 0.1);
     if (Math.random() > 0.9) {
       rockModel.position.set(
@@ -26,10 +25,7 @@ export default class Rock {
 
     this.rockModel = rockModel;
   }
-  static async createRock(scene, loader, url) {
-    if (!this.rockModel) {
-      this.rockModel = await IndomieUtils.loadModel(loader, url);
-    }
-    return new this(scene, this.rockModel.clone());
+  static async createRock(rockModel) {
+    return new this(rockModel);
   }
 }

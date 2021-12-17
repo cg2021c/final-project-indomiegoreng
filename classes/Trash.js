@@ -7,8 +7,7 @@ import IndomieUtils from './IndomieUtils.js';
 
 export default class Trash {
   isCollected = false;
-  constructor(scene, trashModel, sound, soundBuffer) {
-    scene.add(trashModel);
+  constructor(trashModel, sound, soundBuffer) {
     trashModel.scale.set(1.5, 1.5, 1.5);
     if (Math.random() > 0.9) {
       trashModel.position.set(
@@ -29,11 +28,8 @@ export default class Trash {
     this.trashCollectedSound = sound;
     this.trashCollectedSound.setBuffer(soundBuffer);
   }
-  static async createTrash(scene, loader, url, sound, soundBuffer) {
-    if (!this.trashModel) {
-      this.trashModel = await IndomieUtils.loadModel(loader, url);
-    }
-    return new this(scene, this.trashModel.clone(), sound, soundBuffer);
+  static async createTrash(trashModel, sound, soundBuffer) {
+    return new this(trashModel, sound, soundBuffer);
   }
   playTrashCollectedSound() {
     this.stopTrashCollectedSound();

@@ -35,6 +35,11 @@ let isPlaying = false;
 const loader = new GLTFLoader();
 
 let boatModel = null;
+let trashModel = null;
+let refrigeratorModel = null;
+let boxModel = null;
+let crateModel = null;
+let rockModel = null;
 
 let trashes = [];
 let rocks = [];
@@ -55,6 +60,14 @@ loadModels();
 
 async function loadModels() {
   fishModel = await IndomieUtils.loadModel(loader, 'assets/fishes/scene.gltf');
+  trashModel = await IndomieUtils.loadModel(loader, 'assets/trash/scene.gltf');
+  crateModel = await IndomieUtils.loadModel(loader, 'assets/crate/scene.gltf');
+  boxModel = await IndomieUtils.loadModel(loader, 'assets/box/scene.gltf');
+  refrigeratorModel = await IndomieUtils.loadModel(
+    loader,
+    'assets/refrigerator/scene.gltf',
+  );
+  rockModel = await IndomieUtils.loadModel(loader, 'assets/rock/scene.gltf');
   init();
 }
 async function init() {
@@ -153,50 +166,47 @@ async function init() {
 
   for (let i = 0; i < REFRIGERATOR_COUNT; i++) {
     const refrigerator = await Refrigerator.createTrash(
-      scene,
-      loader,
-      'assets/refrigerator/scene.gltf',
+      refrigeratorModel.clone(),
       new THREE.Audio(listener),
       trashCollectedSoundBuffer,
     );
+    scene.add(refrigerator.trashModel);
     trashes.push(refrigerator);
   }
 
   for (let i = 0; i < BOX_COUNT; i++) {
     const box = await Box.createTrash(
-      scene,
-      loader,
-      'assets/box/scene.gltf',
+      boxModel.clone(),
       new THREE.Audio(listener),
       trashCollectedSoundBuffer,
     );
+    scene.add(box.trashModel);
     trashes.push(box);
   }
 
   for (let i = 0; i < CRATE_COUNT; i++) {
     const crate = await Crate.createTrash(
-      scene,
-      loader,
-      'assets/crate/scene.gltf',
+      crateModel.clone(),
       new THREE.Audio(listener),
       trashCollectedSoundBuffer,
     );
+    scene.add(crate.trashModel);
     trashes.push(crate);
   }
 
   for (let i = 0; i < TRASH_COUNT; i++) {
     const trash = await Trash.createTrash(
-      scene,
-      loader,
-      'assets/trash/scene.gltf',
+      trashModel.clone(),
       new THREE.Audio(listener),
       trashCollectedSoundBuffer,
     );
     trashes.push(trash);
+    scene.add(trash.trashModel);
   }
 
   for (let i = 0; i < ROCK_COUNT; i++) {
-    const rock = await Rock.createRock(scene, loader, 'assets/rock/scene.gltf');
+    const rock = await Rock.createRock(rockModel.clone());
+    scene.add(rock.rockModel);
     rocks.push(rock);
   }
 
