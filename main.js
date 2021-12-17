@@ -59,6 +59,7 @@ const GAME_DURATION = 1 * 60;
 loadModels();
 
 async function loadModels() {
+  boatModel = await IndomieUtils.loadModel(loader, 'assets/boat/scene.gltf');
   fishModel = await IndomieUtils.loadModel(loader, 'assets/fishes/scene.gltf');
   trashModel = await IndomieUtils.loadModel(loader, 'assets/trash/scene.gltf');
   crateModel = await IndomieUtils.loadModel(loader, 'assets/crate/scene.gltf');
@@ -212,7 +213,8 @@ async function init() {
 
   window.addEventListener('resize', onWindowResize);
 
-  boat = new Boat(loader, scene, controls, listener);
+  boat = new Boat(boatModel.clone(), controls, listener);
+  scene.add(boat.pivot);
 }
 
 async function onPlayClick() {

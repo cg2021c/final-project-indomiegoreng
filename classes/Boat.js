@@ -37,42 +37,39 @@ export default class Boat {
   boatSoundLoader = null;
   boatSounds = {};
 
-  constructor(loader, scene, controls, listener) {
+  constructor(boatModel, controls, listener) {
     this.boatSound = new THREE.Audio(listener);
     this.boatSoundLoader = new THREE.AudioLoader();
     this.controls = controls;
-    loader.load('assets/boat/scene.gltf', (gltf) => {
-      scene.add(gltf.scene);
-      gltf.scene.scale.set(3, 3, 3);
-      // gltf.scene.position.set(5,13,50)
-      // gltf.scene.rotation.y = 1.5
-      gltf.scene.rotation.y = (3 * Math.PI) / 2;
 
-      this.boat = gltf.scene;
-      this.speed = {
-        vel: 0,
-        rot: 0,
-      };
-      this.score = 0;
+    boatModel.scale.set(3, 3, 3);
+    // boatModel.position.set(5,13,50)
+    // boatModel.rotation.y = 1.5
+    boatModel.rotation.y = (3 * Math.PI) / 2;
 
-      // Bounding box
-      var box = new THREE.Box3().setFromObject(gltf.scene);
-      box.getCenter(gltf.scene.position);
-      gltf.scene.position.multiplyScalar(-1);
+    this.boat = boatModel;
+    this.speed = {
+      vel: 0,
+      rot: 0,
+    };
+    this.score = 0;
 
-      var pivot = new THREE.Group();
-      scene.add(pivot);
-      pivot.add(gltf.scene);
-      pivot.position.set(5, 2, 50);
-      this.pivot = pivot;
+    // Bounding box
+    var box = new THREE.Box3().setFromObject(boatModel);
+    box.getCenter(boatModel.position);
+    boatModel.position.multiplyScalar(-1);
 
-      // var axesHelper = new THREE.AxesHelper(100);
-      // pivot.add(axesHelper);
+    var pivot = new THREE.Group();
+    pivot.add(boatModel);
+    pivot.position.set(5, 2, 50);
+    this.pivot = pivot;
 
-      // Clock
-      this.clock = new THREE.Clock();
-      this.clock.start();
-    });
+    // var axesHelper = new THREE.AxesHelper(100);
+    // pivot.add(axesHelper);
+
+    // Clock
+    this.clock = new THREE.Clock();
+    this.clock.start();
 
     // Audio
     this.loadAudio();
