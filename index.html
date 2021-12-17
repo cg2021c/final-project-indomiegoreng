@@ -10,6 +10,23 @@
   </head>
 
   <body class="relative">
+    <div
+      id="loadingBox"
+      class="absolute top-[50%] left-[50%] -translate-x-2/4 z-100"
+    >
+      <div class="m-auto">
+        <p class="text-black">
+          Loading..<br />Mohon tunggu sebentar lagi. Game akan segera bisa
+          dimainkan.
+        </p>
+        <progress
+          id="loadingProgress"
+          class="w-full mt-2"
+          value="5"
+          max="100"
+        ></progress>
+      </div>
+    </div>
     <div id="app"></div>
     <div class="hidden absolute top-3 left-[50%] -translate-x-2/4" id="top-hud">
       <div class="flex px-4 py-3 space-x-10 rounded-lg bg-gray-700/30">

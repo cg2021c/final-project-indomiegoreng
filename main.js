@@ -25,6 +25,15 @@ import Refrigerator from './classes/Refrigerator.js';
 import Fishes from './classes/Fishes.js';
 import Rock from './classes/Rock';
 
+const loadingProgress = document.getElementById('loadingProgress');
+const loadingBox = document.getElementById('loadingBox');
+function setLoadingProgress(x) {
+  loadingProgress.value = x;
+}
+function destroyLoadingBox() {
+  loadingBox.remove();
+}
+
 let camera, scene, renderer;
 let controls, water, sun;
 let boat = null;
@@ -34,15 +43,25 @@ let isPlaying = false;
 
 const loader = new GLTFLoader();
 
+// Model prototype
 let boatModel = null;
+let trashModel = null;
+let refrigeratorModel = null;
+let boxModel = null;
+let crateModel = null;
+let rockModel = null;
 
 let trashes = [];
 let rocks = [];
+let fishes = [];
 
+// Music
+let listener = null;
 let gameOverSound = null;
 let gameOverSoundLoader = null;
-
-let fishes = [];
+let music = null;
+let oceanSound = null;
+let trashCollectedSound = null;
 
 const TRASH_COUNT = 100;
 const BOX_COUNT = 50;
@@ -54,7 +73,58 @@ const GAME_DURATION = 1 * 60;
 loadModels();
 
 async function loadModels() {
+  // Load models
+  boatModel = await IndomieUtils.loadModel(loader, 'assets/boat/scene.gltf');
+  setLoadingProgress(30);
   fishModel = await IndomieUtils.loadModel(loader, 'assets/fishes/scene.gltf');
+  setLoadingProgress(45);
+  trashModel = await IndomieUtils.loadModel(loader, 'assets/trash/scene.gltf');
+  setLoadingProgress(60);
+  crateModel = await IndomieUtils.loadModel(loader, 'assets/crate/scene.gltf');
+  setLoadingProgress(65);
+  boxModel = await IndomieUtils.loadModel(loader, 'assets/box/scene.gltf');
+  setLoadingProgress(70);
+  refrigeratorModel = await IndomieUtils.loadModel(
+    loader,
+    'assets/refrigerator/scene.gltf',
+  );
+  rockModel = await IndomieUtils.loadModel(loader, 'assets/rock/scene.gltf');
+  setLoadingProgress(85);
+  // Load sounds
+  listener = new THREE.AudioListener();
+
+  trashCollectedSound = new THREE.Audio(listener);
+  new THREE.AudioLoader().load('assets/audio/trash-collected.mp3', (result) => {
+    trashCollectedSound.setBuffer(result);
+  });
+  setLoadingProgress(90);
+
+  let oceanSound = new THREE.Audio(listener);
+  new THREE.AudioLoader().load('assets/audio/calm-sea.mp3', (result) => {
+    oceanSound.setBuffer(result);
+    oceanSound.setVolume(0.2);
+    oceanSound.setLoop(true);
+    oceanSound.play();
+  });
+  setLoadingProgress(92);
+  music = new THREE.Audio(listener);
+  new THREE.AudioLoader().load('assets/audio/music.mp3', (result) => {
+    music.setBuffer(result);
+    music.setVolume(0.3);
+    music.setLoop(true);
+    music.play();
+  });
+  setLoadingProgress(95);
+  gameOverSound = new THREE.Audio(listener);
+  gameOverSoundLoader = new THREE.AudioLoader().load(
+    'assets/audio/game-over.mp3',
+    (result) => {
+      gameOverSound.setBuffer(result);
+    },
+  );
+  setLoadingProgress(100);
+  destroyLoadingBox();
+  // Start game
   init();
 }
 async function init() {
@@ -88,38 +158,7 @@ async function init() {
   camera.position.set(30, 30, 100);
 
   // Load audio
-  let listener = new THREE.AudioListener();
   camera.add(listener);
-
-  let oceanSound = new THREE.Audio(listener);
-  let oceanSoundLoader = new THREE.AudioLoader().load(
-    'assets/audio/calm-sea.mp3',
-    (result) => {
-      oceanSound.setBuffer(result);
-      oceanSound.setVolume(0.2);
-      oceanSound.setLoop(true);
-      oceanSound.play();
-    },
-  );
-
-  let music = new THREE.Audio(listener);
-  let musicLoder = new THREE.AudioLoader().load(
-    'assets/audio/music.mp3',
-    (result) => {
-      music.setBuffer(result);
-      music.setVolume(0.3);
-      music.setLoop(true);
-      music.play();
-    },
-  );
-
-  gameOverSound = new THREE.Audio(listener);
-  gameOverSoundLoader = new THREE.AudioLoader().load(
-    'assets/audio/game-over.mp3',
-    (result) => {
-      gameOverSound.setBuffer(result);
-    },
-  );
 
   // Sun
   sun = new GameSun(scene, renderer);
@@ -143,66 +182,56 @@ async function init() {
 
   const waterUniforms = water.material.uniforms;
 
-  let trashCollectedSoundBuffer = null;
-  let trashCollectedSoundLoader = new THREE.AudioLoader().load(
-    'assets/audio/trash-collected.mp3',
-    (result) => {
-      trashCollectedSoundBuffer = result;
-    },
-  );
-
   for (let i = 0; i < REFRIGERATOR_COUNT; i++) {
     const refrigerator = await Refrigerator.createTrash(
-      scene,
-      loader,
-      'assets/refrigerator/scene.gltf',
+      refrigeratorModel.clone(),
       new THREE.Audio(listener),
-      trashCollectedSoundBuffer,
+      trashCollectedSound,
     );
+    scene.add(refrigerator.trashModel);
     trashes.push(refrigerator);
   }
 
   for (let i = 0; i < BOX_COUNT; i++) {
     const box = await Box.createTrash(
-      scene,
-      loader,
-      'assets/box/scene.gltf',
+      boxModel.clone(),
       new THREE.Audio(listener),
-      trashCollectedSoundBuffer,
+      trashCollectedSound,
     );
+    scene.add(box.trashModel);
     trashes.push(box);
   }
 
   for (let i = 0; i < CRATE_COUNT; i++) {
     const crate = await Crate.createTrash(
-      scene,
-      loader,
-      'assets/crate/scene.gltf',
+      crateModel.clone(),
       new THREE.Audio(listener),
-      trashCollectedSoundBuffer,
+      trashCollectedSound,
     );
+    scene.add(crate.trashModel);
     trashes.push(crate);
   }
 
   for (let i = 0; i < TRASH_COUNT; i++) {
     const trash = await Trash.createTrash(
-      scene,
-      loader,
-      'assets/trash/scene.gltf',
+      trashModel.clone(),
       new THREE.Audio(listener),
-      trashCollectedSoundBuffer,
+      trashCollectedSound,
     );
     trashes.push(trash);
+    scene.add(trash.trashModel);
   }
 
   for (let i = 0; i < ROCK_COUNT; i++) {
-    const rock = await Rock.createRock(scene, loader, 'assets/rock/scene.gltf');
+    const rock = await Rock.createRock(rockModel.clone());
+    scene.add(rock.rockModel);
     rocks.push(rock);
   }
 
   window.addEventListener('resize', onWindowResize);
 
-  boat = new Boat(loader, scene, controls, listener);
+  boat = new Boat(boatModel.clone(), controls, listener);
+  scene.add(boat.pivot);
 }
 
 async function onPlayClick() {
@@ -310,6 +339,10 @@ function checkCollisions() {
       if (trash.trashModel) {
         if (isColliding(boat.pivot, trash.trashModel, 15)) {
           if (trash.isCollected == false) {
+            // Play boing sound
+            if (trashCollectedSound.isPlaying) trashCollectedSound.stop();
+            trashCollectedSound.play();
+
             scene.remove(trash.trashModel);
             trash.setToCollected();
             spawnFishes(trash.trashModel.position);
@@ -330,7 +363,6 @@ function checkCollisions() {
 }
 
 function startTimer(boat, duration, display) {
-  console.log(isPlaying);
   let minutes,
     seconds,
     timer = duration;
@@ -356,7 +388,6 @@ function startTimer(boat, duration, display) {
       gameOverSound.play();
       resetState();
       onTimesUp();
-      console.log(`Score: ${boat.score}`);
       clearInterval(countdown);
     }
   }, 1000);
@@ -377,8 +408,6 @@ function updateScore(score) {
 }
 
 function onTimesUp() {
-  console.log('halo');
-
   // Show the game modal
   const gameModal = document.getElementById('gameModal');
   gameModal.style.display = 'block';
